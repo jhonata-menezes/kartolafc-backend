@@ -6,6 +6,7 @@ import (
 )
 
 const URL_ATLETAS = "/atletas/mercado"
+
 type Atleta struct {
 	Nome string `json:"nome"`
 	Apelido string `json:"apelido"`

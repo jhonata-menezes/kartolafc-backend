@@ -8,9 +8,10 @@ import (
 )
 
 func main(){
+	go kartola.UpdateCache()
+
 	router := chi.NewRouter()
 	kartola.BuildRoutes(router)
-
 	fmt.Println("Bora Cumpade.")
-	http.ListenAndServe(":5015", router)
+	http.ListenAndServe("0.0.0.0:5015", router)
 }

@@ -8,17 +8,18 @@ import (
 )
 
 func GetHome(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
 	response.Write([]byte("{ \"status\":\"Birll\"}"))
 }
 
 func GetStatus(response http.ResponseWriter, request *http.Request) {
-	apiStatus := api.Status{}
-	apiStatus.GetStatus()
+	responseDefault(response)
 
-	response.Write(JsonBuild(apiStatus))
+	response.Write(JsonBuild(CacheStatus))
 }
 
 func GetTimes(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
 	timePesquisado := chi.URLParam(request, "q")
 	times := api.Times{}
 	times.Pesquisa = timePesquisado
@@ -28,6 +29,7 @@ func GetTimes(response http.ResponseWriter, request *http.Request) {
 }
 
 func GetTime(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
 	idString := chi.URLParam(request, "id")
 	time := api.TimeCompleto{}
 
@@ -43,8 +45,14 @@ func GetTime(response http.ResponseWriter, request *http.Request) {
 }
 
 func GetMercado(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
 	atletas := api.Atletas{}
 	atletas.GetAtletas()
 
 	response.Write(JsonBuild(atletas))
+}
+
+func responseDefault(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 }
