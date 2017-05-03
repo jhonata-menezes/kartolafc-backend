@@ -1,7 +1,7 @@
-package kartola
+package kartolafc
 
 import (
-	"github.com/jhonata-menezes/kartola/api"
+	"github.com/jhonata-menezes/kartolafc-backend/api"
 	"time"
 )
 

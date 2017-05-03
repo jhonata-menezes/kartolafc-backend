@@ -1,4 +1,4 @@
-package kartola
+package kartolafc
 
 import (
 	"github.com/valyala/fasthttp"

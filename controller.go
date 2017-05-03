@@ -1,16 +1,19 @@
-package kartola
+package kartolafc
 
 import (
-	"github.com/jhonata-menezes/kartola/api"
+	"github.com/jhonata-menezes/kartolafc-backend/api"
 	"net/http"
 	"github.com/pressly/chi"
 	"strconv"
 	"github.com/pressly/chi/render"
+	"encoding/json"
 )
 
 func GetHome(response http.ResponseWriter, request *http.Request) {
 	responseDefault(response)
-	render.JSON(response, request, []byte("{ \"status\":\"Birll\"}"))
+	var out map[string]string
+	json.Unmarshal([]byte("{ \"status\":\"Birll\"}"), &out)
+	render.JSON(response, request, out)
 }
 
 func GetStatus(response http.ResponseWriter, request *http.Request) {
