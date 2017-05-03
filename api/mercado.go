@@ -3,6 +3,7 @@ package api
 import (
 	"log"
 	"encoding/json"
+	"strings"
 )
 
 const URL_ATLETAS = "/atletas/mercado"
@@ -40,5 +41,11 @@ func (a *Atletas) GetAtletas(){
 		log.Println("atletas status:", res.StatusCode())
 	}else{
 		json.Unmarshal(res.Body(), &a)
+	}
+}
+
+func (a *Atletas) ChangeFormatDefault() {
+	for _, des := range a.Atleta {
+		des.Foto = strings.Replace(des.Foto, "FORMATO", "140x140", 3)
 	}
 }

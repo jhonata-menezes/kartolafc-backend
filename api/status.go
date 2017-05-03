@@ -12,13 +12,13 @@ type Status struct {
 	EsquemaDefaultId int `json:"esquema_default_id"`
 	TimesEscalados int `json:"times_escalados"`
 	Fechamento struct{
-		Dia int
-		Mes int
-		Ano int
-		Hora int
-		Minuto int
-		Timestamp int
-	}
+		Dia int `json:"dia"`
+		Mes int `json:"mes"`
+		Ano int `json:"ano"`
+		Hora int `json:"hora"`
+		Minuto int `json:"minuto"`
+		Timestamp int `json:"timestamp"`
+	} `json:"fechamento"`
 }
 
 func(c *Status) GetStatus(){

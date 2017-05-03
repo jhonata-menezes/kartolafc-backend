@@ -5,17 +5,17 @@ import (
 	"net/http"
 	"github.com/pressly/chi"
 	"strconv"
+	"github.com/pressly/chi/render"
 )
 
 func GetHome(response http.ResponseWriter, request *http.Request) {
 	responseDefault(response)
-	response.Write([]byte("{ \"status\":\"Birll\"}"))
+	render.JSON(response, request, []byte("{ \"status\":\"Birll\"}"))
 }
 
 func GetStatus(response http.ResponseWriter, request *http.Request) {
 	responseDefault(response)
-
-	response.Write(JsonBuild(CacheStatus))
+	render.JSON(response, request, CacheStatus)
 }
 
 func GetTimes(response http.ResponseWriter, request *http.Request) {
@@ -40,19 +40,20 @@ func GetTime(response http.ResponseWriter, request *http.Request) {
 	} else {
 		time.TimeCompleto.TimeId = id
 		time.GetTime()
-		response.Write(JsonBuild(time))
+		render.JSON(response, request, time)
 	}
 }
 
 func GetMercado(response http.ResponseWriter, request *http.Request) {
 	responseDefault(response)
-	atletas := api.Atletas{}
-	atletas.GetAtletas()
+	render.JSON(response, request, CacheKartolaAtletas)
+}
 
-	response.Write(JsonBuild(atletas))
+func GetDestaques(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
+	render.JSON(response, request, CacheDestaques)
 }
 
 func responseDefault(w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 }
