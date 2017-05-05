@@ -57,6 +57,23 @@ func GetDestaques(response http.ResponseWriter, request *http.Request) {
 	render.JSON(response, request, CacheDestaques)
 }
 
+func GetLigas(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
+	nome := chi.URLParam(request, "q")
+	pesquisa := api.PesquisaLigas{}
+	pesquisa.GetPesquisaLigas(nome)
+	render.JSON(response, request, pesquisa)
+}
+
+func GetLiga(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
+	slug := chi.URLParam(request, "id")
+	liga := api.Liga{}
+	liga.Liga.Slug = slug
+	liga.GetLiga()
+	render.JSON(response, request, liga)
+}
+
 func responseDefault(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 }

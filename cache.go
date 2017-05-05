@@ -14,7 +14,7 @@ func UpdateStatus() {
 	status := api.Status{}
 	status.GetStatus()
 	CacheStatus = status
-	SleepCacheSecond(300)
+	SleepCacheSecond(60)
 }
 
 func UpdateDestaques() {
@@ -30,7 +30,7 @@ func UpdateMercado() {
 	mercado.GetAtletas()
 	CacheKartolaAtletas = mercado
 
-	SleepCacheSecond(600)
+	SleepCacheSecond(60)
 }
 
 func UpdateCache() {

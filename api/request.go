@@ -16,6 +16,7 @@ func (r *Request) Get(uri string, timeout int) (*fasthttp.Response, error) {
 	req.Header.Set("Referer", "https://cartolafc.globo.com/")
 	req.Header.Set("Origin", "https://cartolafc.globo.com/")
 	req.Header.Set("Accept-Language", "pt-BR,pt;q=0.8,en-US;q=0.6,en;q=0.4,es;q=0.2")
+	req.Header.Set("X-GLB-Token", "1af163e2480eeffb9d494c99c62c2b4ad7339584269786f375a4e414252347939474b537942363545624574574d313249616d695a4243365452474d53425559684163686f555671327849446c5a314236504f35704b50734b63714975796659463341334170413d3d3a303a75776b6e6e666d7175796f66656b707463666d71")
 	req.URI().Update(BASE_URL_API + uri)
 	res := fasthttp.AcquireResponse()
 	client := fasthttp.Client{}
