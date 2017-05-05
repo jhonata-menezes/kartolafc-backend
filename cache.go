@@ -13,14 +13,18 @@ var CacheDestaques api.Destaques
 func UpdateStatus() {
 	status := api.Status{}
 	status.GetStatus()
-	CacheStatus = status
+	if status.RodadaAtual != 0 {
+		CacheStatus = status
+	}
 	SleepCacheSecond(60)
 }
 
 func UpdateDestaques() {
 	destaques := api.Destaques{}
 	destaques.GetDestaques()
-	CacheDestaques = destaques
+	if len(destaques) > 0 {
+		CacheDestaques = destaques
+	}
 
 	SleepCacheSecond(60)
 }
@@ -28,7 +32,9 @@ func UpdateDestaques() {
 func UpdateMercado() {
 	mercado := api.Atletas{}
 	mercado.GetAtletas()
-	CacheKartolaAtletas = mercado
+	if len(mercado.Atleta) > 0 {
+		CacheKartolaAtletas = mercado
+	}
 
 	SleepCacheSecond(60)
 }
