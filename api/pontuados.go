@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"strings"
-	"log"
 )
 
 const URL_PONTUADOS = "/atletas/pontuados"
