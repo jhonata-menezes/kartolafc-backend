@@ -74,6 +74,12 @@ func GetLiga(response http.ResponseWriter, request *http.Request) {
 	render.JSON(response, request, liga)
 }
 
+func GetPontuados(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
+
+	render.JSON(response, request, CachePontuados)
+}
+
 func responseDefault(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 }

@@ -8,6 +8,7 @@ import (
 var CacheKartolaAtletas api.Atletas
 var CacheStatus api.Status
 var CacheDestaques api.Destaques
+var CachePontuados api.Pontuados
 
 
 func UpdateStatus() {
@@ -39,10 +40,22 @@ func UpdateMercado() {
 	SleepCacheSecond(60)
 }
 
+func UpdatePontuados() {
+	pontuados := api.Pontuados{}
+	pontuados.GetPontuados()
+
+	if pontuados.Rodada != 0 {
+		CachePontuados = pontuados
+	}
+
+	SleepCacheSecond(60)
+}
+
 func UpdateCache() {
 	go UpdateStatus()
 	go UpdateDestaques()
 	go UpdateMercado()
+	go UpdatePontuados()
 }
 
 func SleepCacheSecond(t int) {
