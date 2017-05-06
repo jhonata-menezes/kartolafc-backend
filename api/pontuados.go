@@ -55,6 +55,5 @@ func (p *Pontuados) ChangeFormatDefault() {
 		foto := p.Atletas[i]
 		foto.Foto = strings.Replace(des.Foto, "FORMATO", "140x140", 3)
 		p.Atletas[i] = foto
-		log.Println(strings.Replace(des.Foto, "FORMATO", "140x140", 3))
 	}
 }
