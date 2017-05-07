@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 )
 
 const URI_STATUS = "/mercado/status"
@@ -11,6 +12,10 @@ type Status struct {
 	StatusMercado int `json:"status_mercado"`
 	EsquemaDefaultId int `json:"esquema_default_id"`
 	TimesEscalados int `json:"times_escalados"`
+	GameOver bool `json:"game_over"`
+	MercadoPosRadada bool `json:"mercado_pos_radada"`
+	Reativar bool `json:"reativar"`
+	Aviso string `json:"aviso"`
 	Fechamento struct{
 		Dia int `json:"dia"`
 		Mes int `json:"mes"`
@@ -26,14 +31,15 @@ func(c *Status) GetStatus(){
 
 	res, err := request.Get(URI_STATUS, 15)
 	if err != nil {
-		panic(err)
-	}
-	if res.StatusCode() != 200 {
-		panic("endpoint status com code")
-	}
-
-	err = json.Unmarshal(res.Body(), &c)
-	if err != nil {
-		panic(err)
+		log.Println(err)
+	}else{
+		if res.StatusCode() != 200 {
+			log.Println("endpoint status com code")
+		}else{
+			err = json.Unmarshal(res.Body(), &c)
+			if err != nil {
+				log.Println(err)
+			}
+		}
 	}
 }
