@@ -39,7 +39,7 @@ type Pontuados struct {
 }
 
 func (p *Pontuados) GetPontuados() {
-	file, err := ioutil.ReadFile("/home/jhonata/.gopath/src/github.com/jhonata-menezes/kartolafc-backend/mock/pontuados.json")
+	file, err := ioutil.ReadFile("/home/jhonata-menezes/workspace-go/src/github.com/jhonata-menezes/kartolafc-backend/mock/pontuados.json")
 	if err != nil {
 		panic(err)
 	}

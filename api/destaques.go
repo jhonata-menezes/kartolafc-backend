@@ -39,7 +39,7 @@ func (d *Destaques) GetDestaques() {
 }
 
 func (d *Destaques) ChangeFormatDefault() {
-	for _, des := range *d {
-		des.Atleta.Foto = strings.Replace(des.Atleta.Foto, "FORMATO", "140x140", 3)
+	for i, des := range *d {
+		(*d)[i].Atleta.Foto = strings.Replace(des.Atleta.Foto, "FORMATO", "140x140", 3)
 	}
 }

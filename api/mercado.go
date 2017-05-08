@@ -41,11 +41,12 @@ func (a *Atletas) GetAtletas(){
 		log.Println("atletas status:", res.StatusCode())
 	}else{
 		json.Unmarshal(res.Body(), &a)
+		a.ChangeFormatDefault()
 	}
 }
 
 func (a *Atletas) ChangeFormatDefault() {
-	for _, des := range a.Atleta {
-		des.Foto = strings.Replace(des.Foto, "FORMATO", "140x140", 3)
+	for i, des := range a.Atleta {
+		a.Atleta[i].Foto = strings.Replace(des.Foto, "FORMATO", "140x140", 3)
 	}
 }
