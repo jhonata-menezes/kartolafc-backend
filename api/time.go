@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"encoding/json"
+	"strings"
 )
 
 const URL_TIME_ID = "/time/id/%d"
@@ -25,7 +26,11 @@ type Time struct {
 }
 
 type TimeCompleto struct {
+	Atletas []Atleta `json:"atletas"`
 	TimeCompleto Time `json:"time"`
+	Patrimonio int `json:"patrimonio"`
+	EsquemaId int `json:"esquema_id"`
+	ValorTime float32 `json:"valor_time"`
 	Mensagem string `json:"mensagem"`
 	RodadaAtual int `json:"rodada_atual"`
 }
@@ -41,9 +46,16 @@ func (t *TimeCompleto) GetTime(){
 		log.Println("time id diferente de 200", res.StatusCode(), "response: ", string(res.Body()))
 	}else{
 		json.Unmarshal(res.Body(), &t)
+		t.ChangeFormatDefault()
 	}
 }
 
 func (t *TimeCompleto) MountUrl() string {
 	return fmt.Sprintf(URL_TIME_ID, t.TimeCompleto.TimeId)
+}
+
+func (a *TimeCompleto) ChangeFormatDefault() {
+	for i, des := range a.Atletas {
+		a.Atletas[i].Foto = strings.Replace(des.Foto, "FORMATO", "140x140", 3)
+	}
 }
