@@ -25,6 +25,7 @@ func UpdateDestaques() {
 	destaques := api.Destaques{}
 	destaques.GetDestaques()
 	if len(destaques) > 0 {
+		//log.Printf("%#v", destaques)
 		CacheDestaques = destaques
 	}
 

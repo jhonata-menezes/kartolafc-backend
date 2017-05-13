@@ -2,8 +2,8 @@ package api
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"strings"
+	"log"
 )
 
 const URL_PONTUADOS = "/atletas/pontuados"
@@ -39,11 +39,15 @@ type Pontuados struct {
 }
 
 func (p *Pontuados) GetPontuados() {
-	file, err := ioutil.ReadFile("/home/jhonata-menezes/workspace-go/src/github.com/jhonata-menezes/kartolafc-backend/mock/pontuados.json")
+	request := Request{}
+	res, err := request.Get(URL_PONTUADOS, 10)
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
-	if err := json.Unmarshal(file,&p); err == nil {
+
+	if err = json.Unmarshal(res.Body(),&p); err != nil {
+		log.Println("json pontuados", err)
+	}else{
 		p.ChangeFormatDefault()
 	}
 

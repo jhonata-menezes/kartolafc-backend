@@ -33,8 +33,11 @@ func (d *Destaques) GetDestaques() {
 	if res.StatusCode() != 200 {
 		log.Println("destaques diferente de 200 status", res.StatusCode())
 	}else{
-		json.Unmarshal(res.Body(), &d)
-		d.ChangeFormatDefault()
+		if err = json.Unmarshal(res.Body(), &d); err != nil {
+			log.Println("json destaques", err)
+		}else{
+			d.ChangeFormatDefault()
+		}
 	}
 }
 
