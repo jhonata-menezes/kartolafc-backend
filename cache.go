@@ -18,7 +18,7 @@ func UpdateStatus() {
 		CacheStatus = status
 	}
 	SleepCacheSecond(60)
-	go UpdateStatus()
+	UpdateStatus()
 }
 
 func UpdateDestaques() {
@@ -30,7 +30,7 @@ func UpdateDestaques() {
 	}
 
 	SleepCacheSecond(60)
-	go UpdateDestaques()
+	UpdateDestaques()
 }
 
 func UpdateMercado() {
@@ -41,7 +41,7 @@ func UpdateMercado() {
 	}
 
 	SleepCacheSecond(60)
-	go UpdateMercado()
+	UpdateMercado()
 }
 
 func UpdatePontuados() {
@@ -53,7 +53,7 @@ func UpdatePontuados() {
 	}
 
 	SleepCacheSecond(60)
-	go UpdatePontuados()
+	UpdatePontuados()
 }
 
 func UpdateCache() {
