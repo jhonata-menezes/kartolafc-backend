@@ -10,11 +10,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"strconv"
+	"os"
 )
 
 type MeuTime api.TimeCompleto
 
 func main() {
+	idInicial, _:= strconv.Atoi(os.Args[1])
+	idFinal, _ := strconv.Atoi(os.Args[2])
 	session, err := mgo.Dial(cmd.MongoDBIpPort)
 	if err != nil {
 		panic(err)
@@ -23,7 +27,7 @@ func main() {
 	var wg = sync.WaitGroup{}
 	chIdTime := make(chan int)
 
-	for g:=0; g<20; g++ {
+	for g:=0; g<40; g++ {
 		collection := session.Copy().DB("kartolafc").C("times")
 		go getTime(&chIdTime, &wg, collection)
 	}
@@ -31,32 +35,33 @@ func main() {
 	inicio := time.Now()
 	//hora de lancar os id's para processar
 	log.Println("enviando id's")
-	for g:=1; g<1000; g++ {
+	for g:=idInicial; g<=idFinal; g++ {
 		chIdTime <- g
 	}
 
 	for {
+		time.Sleep(10 * time.Hour)
 		cnt := len(chIdTime)
 		log.Println("contagem fila", cnt)
 		if cnt  == 0 {
 			break
 		}
-		time.Sleep(10 * time.Second)
 	}
 	log.Println("fim", time.Since(inicio))
 }
 
 
-func getTime(time *chan int, wg *sync.WaitGroup, c *mgo.Collection) {
+func getTime(times *chan int, wg *sync.WaitGroup, c *mgo.Collection) {
 	defer wg.Done()
 	tentativas := 0
-	for t := range *time {
+	for t := range *times {
 		timeApi := MeuTime{}
 		timeApi.TimeCompleto.TimeId = t
 		statusCode := timeApi.GetTime()
 
 		if statusCode == 500 {
-			*time <- t
+			log.Println("id", t, "status 500 enviando para a fila")
+			*times <- t
 		}
 
 		if tentativas >= 100 {
@@ -71,6 +76,8 @@ func getTime(time *chan int, wg *sync.WaitGroup, c *mgo.Collection) {
 		err := c.Insert(timeApi)
 		if err != nil {
 			log.Println("nao foi possivel inserir", err)
+		}else{
+			log.Println("id", t, "salvo no banco")
 		}
 		tentativas = 0
 	}
