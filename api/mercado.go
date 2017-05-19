@@ -22,9 +22,7 @@ type Atleta struct {
 	VariacaoNum int `json:"variacao_num"`
 	MediaNum int `json:"media_num"`
 	JogosNum int `json:"jogos_num"`
-	Scout struct{
-		//
-	} `json:"scout"`
+	Scout map[string]int `json:"scout"`
 }
 
 type Atletas struct{
