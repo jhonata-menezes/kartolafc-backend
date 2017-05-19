@@ -19,23 +19,24 @@ type MeuTime api.TimeCompleto
 func main() {
 	idInicial, _:= strconv.Atoi(os.Args[1])
 	idFinal, _ := strconv.Atoi(os.Args[2])
+	jobs, _ := strconv.Atoi(os.Args[3])
 	session, err := mgo.Dial(cmd.MongoDBIpPort)
 	if err != nil {
 		panic(err)
 	}
 	defer session.Close()
 	var wg = sync.WaitGroup{}
-	chIdTime := make(chan int)
+	chIdTime := make(chan int, 20000000)
 
-	for g:=0; g<40; g++ {
+	for g:=0; g<jobs; g++ {
 		collection := session.Copy().DB("kartolafc").C("times")
-		go getTime(&chIdTime, &wg, collection)
+		go getTime(chIdTime, &wg, collection)
 	}
 
 	inicio := time.Now()
 	//hora de lancar os id's para processar
 	log.Println("enviando id's")
-	for g:=idInicial; g<=idFinal; g++ {
+	for g:=idFinal; g>=idInicial; g-- {
 		chIdTime <- g
 	}
 
@@ -51,18 +52,21 @@ func main() {
 }
 
 
-func getTime(times *chan int, wg *sync.WaitGroup, c *mgo.Collection) {
+func getTime(times chan int, wg *sync.WaitGroup, c *mgo.Collection) {
 	defer wg.Done()
 	tentativas := 0
-	for t := range *times {
+	for t := range times {
 		timeApi := MeuTime{}
 		timeApi.TimeCompleto.TimeId = t
 		statusCode := timeApi.GetTime()
+		log.Println("status", statusCode)
 
 		if statusCode == 500 {
 			log.Println("id", t, "status 500 enviando para a fila")
-			*times <- t
+			times <-t
+			continue
 		}
+		log.Println("haha")
 
 		if tentativas >= 100 {
 			log.Println("tentativas", tentativas, "excedidas parando a goroutine")
