@@ -2,86 +2,71 @@ package main
 
 import (
 	"gopkg.in/mgo.v2"
-	"github.com/jhonata-menezes/kartolafc-backend/api"
-	"gopkg.in/mgo.v2/bson"
-	"log"
-	"sort"
 	"time"
+	"github.com/pressly/chi"
+	"github.com/pressly/chi/middleware"
+	"github.com/pressly/chi/render"
+	"net/http"
+	"log"
+	"github.com/jhonata-menezes/kartolafc-backend/cmd"
+	"github.com/jhonata-menezes/kartolafc-backend"
 	"strconv"
-	"os"
+	"encoding/json"
 )
 
-type Atleta struct {
-	AtletaId int `json:"atleta_id"`
-}
-
-type Atletas struct {
-	Pontuacao float32
-	Atletas []Atleta `bson:"atletas"`
-	TimeCompleto struct{
-		TimeId int
-	} `bson:"timecompleto"`
-}
-
-type Times []Atletas
-
-func (a Times) Len() int {
-	return len(a)
-}
-
-func (a Times) Swap(i, j int) {
-	a[i], a[j] = a[j], a[i]
-}
-
-func (a Times) Less(i, j int) bool {
-	time1 := SomaPontuacao(a[i])
-	time2 := SomaPontuacao(a[j])
-	a[i].Pontuacao = time1
-	a[j].Pontuacao = time2
-	return  time1 > time2
-}
-
-func SomaPontuacao(atletasTime Atletas) float32 {
-	var soma float32
-	for _, a := range atletasTime.Atletas {
-		soma+= Pontuados.Atletas[a.AtletaId].Pontuacao
-	}
-	return soma
-}
-
-var Pontuados api.Pontuados
-
 func main() {
-	limit, _:= strconv.Atoi(os.Args[1])
 	session, err := mgo.Dial("127.0.0.1")
 	if err != nil {
 		panic(err)
 	}
+
 	defer session.Close()
 	session.SetSocketTimeout(2 * time.Hour)
 	session.SetMode(mgo.Monotonic, true)
 	colllection := session.DB("kartolafc").C("times")
 
-	inicio := time.Now()
-	Pontuado := api.Pontuados{}
-	Pontuado.GetPontuados()
+	kartolafc.LoadInMemory(colllection)
 
-	Pontuados = Pontuado
+	router := chi.NewRouter()
+	router.Use(middleware.DefaultCompress)
+	router.Use(render.SetContentType(render.ContentTypeJSON))
 
-	var atl Times
-	err = colllection.Find(bson.M{}).Limit(limit).All(&atl)
+	router.Use(middleware.Logger)
+	router.Use(middleware.RealIP)
+	router.Use(middleware.RequestID)
 
+	router.Get("/ranking/melhores", GetMelhoresRanking)
+	router.Get("/ranking/time/id/:id", GetRankingTimeId)
+
+	log.Println("listen", cmd.ServerBind)
+	err = http.ListenAndServe(cmd.ServerBind, router)
 	if err != nil {
 		panic(err)
 	}
-	log.Println("pegar todos times da collection", time.Since(inicio))
+}
 
-	inicio = time.Now()
+func GetMelhoresRanking(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
+	render.JSON(response, request, kartolafc.CacheRankingPontuadosMelhores)
+}
 
-	sort.Sort(atl)
+func GetRankingTimeId(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
+	timeId, err := strconv.Atoi(chi.URLParam(request, "id"))
 
-	log.Println("sort", time.Since(inicio))
+	if err != nil ||
+		timeId < 1 ||
+		timeId >= 15000000 ||
+		kartolafc.CacheRankingTimeIdPontuados[timeId].TimeId == 0{
 
-	log.Printf("exibindo registro 0 ordenado %#v \n", atl[0])
+		var out map[string]string
+		json.Unmarshal([]byte("{ \"status\":\"error\", \"message\":\"id informado nao existe\"}"), &out)
+		render.JSON(response, request, out)
+	}else{
+		render.JSON(response, request, kartolafc.CacheRankingTimeIdPontuados[timeId])
+	}
+}
 
+func responseDefault(w http.ResponseWriter) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 }

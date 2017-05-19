@@ -9,7 +9,9 @@ var CacheKartolaAtletas api.Atletas
 var CacheStatus api.Status
 var CacheDestaques api.Destaques
 var CachePontuados api.Pontuados
-
+var CacheRankingPontuados TimesRankingFormated
+var CacheRankingPontuadosMelhores []TimeRankingFormated
+var CacheRankingTimeIdPontuados []TimeIdRanking
 
 func UpdateStatus() {
 	status := api.Status{}

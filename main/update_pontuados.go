@@ -76,7 +76,7 @@ func Update(pontuadosOld api.Pontuados) (api.Pontuados, bool) {
 
 func pontuadosSaoIguais(old, new api.Pontuados) bool {
 	for atletaId, desc := range new.Atletas {
-		//log.Println("id", atletaId, "old", desc.Pontuacao, "new", new.Atletas[atletaId].Pontuacao)
+		//log.Println("id", atletaId, "old", desc.Pontuacao, "new", new.AtletasRanking[atletaId].Pontuacao)
 		if (old.Atletas[atletaId].Pontuacao == desc.Pontuacao) {
 			continue
 		}
