@@ -21,6 +21,8 @@ func main() {
 	idFinal, _ := strconv.Atoi(os.Args[2])
 	jobs, _ := strconv.Atoi(os.Args[3])
 	session, err := mgo.Dial(cmd.MongoDBIpPort)
+	session.SetSocketTimeout(3 * time.Hour)
+	session.SetMode(mgo.Monotonic, true)
 	if err != nil {
 		panic(err)
 	}

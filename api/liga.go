@@ -3,6 +3,7 @@ package api
 import (
 	"log"
 	"encoding/json"
+	"strconv"
 )
 
 const URL_LIGA = "/auth/liga/"
@@ -59,10 +60,9 @@ type Liga struct {
 	} `json:"times"`
 }
 
-func (l *Liga) GetLiga() {
+func (l *Liga) GetLiga(page int) {
 	request := Request{}
-
-	if res, err := request.Get(URL_LIGA+l.Liga.Slug, 10);
+	if res, err := request.Get(URL_LIGA+l.Liga.Slug + "?page=" + strconv.Itoa(page), 10);
 		err != nil || res.StatusCode() != 200 {
 		log.Println("liga id status", res.StatusCode(), "err", err )
 	}else{

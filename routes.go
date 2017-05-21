@@ -10,6 +10,6 @@ func BuildRoutes(mux *chi.Mux){
 	mux.Get("/atletas/mercado", GetMercado)
 	mux.Get("/mercado/destaques", GetDestaques)
 	mux.Get("/ligas/:q", GetLigas)
-	mux.Get("/liga/:id", GetLiga)
+	mux.Get("/liga/:id/:page", GetLiga)
 	mux.Get("/atletas/pontuados", GetPontuados)
 }

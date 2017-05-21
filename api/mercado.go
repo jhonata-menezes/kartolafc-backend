@@ -18,9 +18,9 @@ type Atleta struct {
 	PosicaoId int `json:"posicao_id"`
 	StatusId int `json:"status_id"`
 	PontosNum int `json:"pontos_num"`
-	PrecoNum int `json:"preco_num"`
-	VariacaoNum int `json:"variacao_num"`
-	MediaNum int `json:"media_num"`
+	PrecoNum float32 `json:"preco_num"`
+	VariacaoNum float32 `json:"variacao_num"`
+	MediaNum float32 `json:"media_num"`
 	JogosNum int `json:"jogos_num"`
 	Scout map[string]int `json:"scout"`
 }
