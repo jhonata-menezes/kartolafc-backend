@@ -67,10 +67,22 @@ func GetLigas(response http.ResponseWriter, request *http.Request) {
 
 func GetLiga(response http.ResponseWriter, request *http.Request) {
 	responseDefault(response)
+	var page int
+	pageString := chi.URLParam(request, "page")
+	if pageString != "" {
+		pageOne , err := strconv.Atoi(pageString)
+		if err != nil || pageOne < 1 || pageOne > 5 {
+			var out map[string]string
+			json.Unmarshal([]byte("{ \"status\":\"error\", \"message\":\"id informado nao é numerico ou menor que 1 ou maior que 5\"}"), &out)
+			render.JSON(response, request, out)
+			return;
+		}
+		page = pageOne
+	}
 	slug := chi.URLParam(request, "id")
 	liga := api.Liga{}
 	liga.Liga.Slug = slug
-	liga.GetLiga()
+	liga.GetLiga(page)
 	render.JSON(response, request, liga)
 }
 

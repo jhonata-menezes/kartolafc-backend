@@ -21,6 +21,8 @@ func main() {
 	idFinal, _ := strconv.Atoi(os.Args[2])
 	jobs, _ := strconv.Atoi(os.Args[3])
 	session, err := mgo.Dial(cmd.MongoDBIpPort)
+	session.SetSocketTimeout(3 * time.Hour)
+	session.SetMode(mgo.Monotonic, true)
 	if err != nil {
 		panic(err)
 	}
@@ -59,14 +61,12 @@ func getTime(times chan int, wg *sync.WaitGroup, c *mgo.Collection) {
 		timeApi := MeuTime{}
 		timeApi.TimeCompleto.TimeId = t
 		statusCode := timeApi.GetTime()
-		log.Println("status", statusCode)
 
 		if statusCode == 500 {
 			log.Println("id", t, "status 500 enviando para a fila")
 			times <-t
 			continue
 		}
-		log.Println("haha")
 
 		if tentativas >= 100 {
 			log.Println("tentativas", tentativas, "excedidas parando a goroutine")
