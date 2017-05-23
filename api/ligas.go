@@ -22,7 +22,7 @@ type PesquisaLigas []Ligas
 
 func (l *PesquisaLigas) GetPesquisaLigas(nome string) {
 	request := Request{}
-	res, err := request.Get(URL_LIGAS + nome, 10)
+	res, err := request.Get(URL_LIGAS + UrlEncode(nome), 10)
 	if err != nil {
 		log.Println("ligas", err)
 	}
