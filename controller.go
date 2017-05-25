@@ -6,14 +6,16 @@ import (
 	"github.com/pressly/chi"
 	"strconv"
 	"github.com/pressly/chi/render"
-	"encoding/json"
 )
+
+type DefaultMessage struct {
+	Status string `json:"status"`
+	Mensagem string `json:"mensagem"`
+}
 
 func GetHome(response http.ResponseWriter, request *http.Request) {
 	responseDefault(response)
-	var out map[string]string
-	json.Unmarshal([]byte("{ \"status\":\"Birll\"}"), &out)
-	render.JSON(response, request, out)
+	render.JSON(response, request, DefaultMessage{"ok", "Birll"})
 }
 
 func GetStatus(response http.ResponseWriter, request *http.Request) {
@@ -39,7 +41,7 @@ func GetTime(response http.ResponseWriter, request *http.Request) {
 	id, err := strconv.Atoi(idString)
 
 	if err != nil {
-		response.Write([]byte("{\"status\": \"error\", \"message\": \"id tem que ser um numero\"}"))
+		render.JSON(response, request, DefaultMessage{"error", "id tem que ser um numero"})
 	} else {
 		time.TimeCompleto.TimeId = id
 		time.GetTime()
@@ -72,9 +74,7 @@ func GetLiga(response http.ResponseWriter, request *http.Request) {
 	if pageString != "" {
 		pageOne , err := strconv.Atoi(pageString)
 		if err != nil || pageOne < 1 || pageOne > 5 {
-			var out map[string]string
-			json.Unmarshal([]byte("{ \"status\":\"error\", \"message\":\"id informado nao é numerico ou menor que 1 ou maior que 5\"}"), &out)
-			render.JSON(response, request, out)
+			render.JSON(response, request, DefaultMessage{"error", "id informado nao é numerico ou menor que 1 ou maior que 5"})
 			return;
 		}
 		page = pageOne
@@ -91,6 +91,21 @@ func GetPontuados(response http.ResponseWriter, request *http.Request) {
 
 	render.JSON(response, request, CachePontuados)
 }
+
+func GetPartida(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
+	partidaString := chi.URLParam(request, "partida")
+	partida, err := strconv.Atoi(partidaString)
+	if err != nil || partida < 0 || partida > 20 || CachePartidas[partida].Rodada == 0 {
+		render.JSON(response, request, DefaultMessage{"error", "Rodada invalida."})
+		return
+	}
+	if (partida >= 0 && partida <= 20) {
+		render.JSON(response, request, CachePartidas[partida])
+	}
+}
+
+
 
 func responseDefault(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")

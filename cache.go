@@ -3,6 +3,7 @@ package kartolafc
 import (
 	"github.com/jhonata-menezes/kartolafc-backend/api"
 	"time"
+	"log"
 )
 
 var CacheKartolaAtletas api.Atletas
@@ -12,6 +13,7 @@ var CachePontuados api.Pontuados
 var CacheRankingPontuados TimesRankingFormated
 var CacheRankingPontuadosMelhores []TimeRankingFormated
 var CacheRankingTimeIdPontuados []TimeIdRanking
+var CachePartidas []api.Partidas
 
 func UpdateStatus() {
 	status := api.Status{}
@@ -58,11 +60,30 @@ func UpdatePontuados() {
 	UpdatePontuados()
 }
 
+func UpdatePartidas() {
+	CachePartidas = make([]api.Partidas, 21)
+	for i:=0; i<=20; i++ {
+		tmp := api.Partidas{}
+		if i == 0 {
+			tmp.Get(i)
+			CachePartidas[i] = tmp
+			continue
+		}
+		tmp.Get(i)
+		CachePartidas[i] = tmp
+		log.Println(i, CachePartidas[i].Rodada)
+	}
+
+	SleepCacheSecond(3600)
+	UpdatePartidas()
+}
+
 func UpdateCache() {
 	go UpdateStatus()
 	go UpdateDestaques()
 	go UpdateMercado()
 	go UpdatePontuados()
+	go UpdatePartidas()
 }
 
 func SleepCacheSecond(t int) {
