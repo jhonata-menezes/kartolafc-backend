@@ -74,7 +74,7 @@ func UpdatePartidas() {
 		log.Println(i, CachePartidas[i].Rodada)
 	}
 
-	SleepCacheSecond(3600)
+	SleepCacheSecond(30)
 	UpdatePartidas()
 }
 
