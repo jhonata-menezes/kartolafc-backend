@@ -13,4 +13,5 @@ func BuildRoutes(mux *chi.Mux){
 	mux.Get("/liga/:id/:page", GetLiga)
 	mux.Get("/atletas/pontuados", GetPontuados)
 	mux.Get("/partidas/:partida", GetPartida)
+	mux.Post("/notificacao/adicionar", AddNotificacao)
 }

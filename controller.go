@@ -6,6 +6,9 @@ import (
 	"github.com/pressly/chi"
 	"strconv"
 	"github.com/pressly/chi/render"
+	"github.com/SherClockHolmes/webpush-go"
+	"log"
+	"github.com/jhonata-menezes/kartolafc-backend/notification"
 )
 
 type DefaultMessage struct {
@@ -105,7 +108,13 @@ func GetPartida(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
-
+func AddNotificacao(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
+	client := webpush.Subscription{}
+	render.DecodeJSON(request.Body, &client)
+	notification.ChannelSubscribe <- client
+	render.JSON(response, request,  DefaultMessage{"ok", "Inscrito com sucesso"})
+}
 
 func responseDefault(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
