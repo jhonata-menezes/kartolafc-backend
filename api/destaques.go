@@ -14,7 +14,7 @@ type Destaque struct {
 		Nome string `json:"nome"`
 		Apelido string `json:"apelido"`
 		Foto string `json:"foto"`
-		PrecoEditorial int `json:"preco_editorial"`
+		PrecoEditorial float32 `json:"preco_editorial"`
 	} `json:"Atleta"`
 	Escalacoes int `json:"escalacoes"`
 	Clube string `json:"clube"`
