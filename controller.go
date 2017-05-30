@@ -6,8 +6,6 @@ import (
 	"github.com/pressly/chi"
 	"strconv"
 	"github.com/pressly/chi/render"
-	"github.com/SherClockHolmes/webpush-go"
-	"log"
 	"github.com/jhonata-menezes/kartolafc-backend/notification"
 )
 
@@ -110,7 +108,7 @@ func GetPartida(response http.ResponseWriter, request *http.Request) {
 
 func AddNotificacao(response http.ResponseWriter, request *http.Request) {
 	responseDefault(response)
-	client := webpush.Subscription{}
+	client := notification.Subscription{}
 	render.DecodeJSON(request.Body, &client)
 	notification.ChannelSubscribe <- client
 	render.JSON(response, request,  DefaultMessage{"ok", "Inscrito com sucesso"})
