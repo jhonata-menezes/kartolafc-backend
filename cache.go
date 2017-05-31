@@ -29,7 +29,6 @@ func UpdateDestaques() {
 	destaques := api.Destaques{}
 	destaques.GetDestaques()
 	if len(destaques) > 0 {
-		//log.Printf("%#v", destaques)
 		CacheDestaques = destaques
 	}
 
@@ -49,6 +48,11 @@ func UpdateMercado() {
 }
 
 func UpdatePontuados() {
+	// para nao ficar enviando muitas requisicoes, ira apenas atualizar quando o mercado estiver fechado
+	for (CacheStatus.StatusMercado != 2) {
+		SleepCacheSecond(60)
+	}
+
 	pontuados := api.Pontuados{}
 	pontuados.GetPontuados()
 

@@ -1,0 +1,7 @@
+{
+  "bind": "0.0.0.0:5015",
+  "mongodb": "127.0.0.1:27017",
+  "vapidPrivate": "",
+  "botKey": "",
+  "botClientId": 0
+}

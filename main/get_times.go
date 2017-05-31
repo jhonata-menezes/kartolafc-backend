@@ -20,7 +20,7 @@ func main() {
 	idInicial, _:= strconv.Atoi(os.Args[1])
 	idFinal, _ := strconv.Atoi(os.Args[2])
 	jobs, _ := strconv.Atoi(os.Args[3])
-	session, err := mgo.Dial(cmd.MongoDBIpPort)
+	session, err := mgo.Dial(cmd.Config.MongoDB)
 	session.SetSocketTimeout(3 * time.Hour)
 	session.SetMode(mgo.Monotonic, true)
 	if err != nil {

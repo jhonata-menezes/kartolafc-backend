@@ -8,47 +8,38 @@ import (
 	"github.com/pressly/chi/render"
 	"github.com/jhonata-menezes/kartolafc-backend/cmd"
 	"log"
-	"io/ioutil"
-	"encoding/json"
 	"github.com/jhonata-menezes/kartolafc-backend/api"
 	"github.com/jhonata-menezes/kartolafc-backend/notification"
-	"time"
 	"github.com/goware/cors"
+	"github.com/jhonata-menezes/kartolafc-backend/bot"
+	"gopkg.in/mgo.v2"
+	"time"
+	"gopkg.in/mgo.v2/bson"
+	"encoding/json"
 )
 
 func main() {
 
 	go kartolafc.UpdateCache()
 
-	// temporario, para criar pontuados mesmo com mercado aberto
-	fileByte, err := ioutil.ReadFile("./pontuados.json")
-	if err == nil {
-		p := api.Pontuados{}
-		json.Unmarshal(fileByte, &p)
-		kartolafc.CachePontuados = p
+	// mongodb
+	session, err := mgo.Dial(cmd.Config.MongoDB)
+	if err != nil {
+		panic(err)
 	}
+	session.SetMode(mgo.Monotonic, true)
+	session.SetSocketTimeout(3 * time.Hour)
+	ranking(session.Copy())
 	//-------------------------------------------------------------------------------------
 
-	// temporario para teste com web push
+	// web push
 	go notification.AddSubscribe(&notification.ChannelSubscribe)
-	channelMessageNotification := make(chan notification.MessageNotification, 1000)
-	go notification.Notify(&channelMessageNotification)
-	go func (){
-		for {
-			m := notification.MessageNotification{}
-			m.Body = "teste 001"
-			m.Badge = "http://images.terra.com/2015/05/20/corinthians.png"
-			m.Icon = "http://images.terra.com/2015/05/20/corinthians.png"
-			m.Link = "http://kartolafc.com.br/#/ligas"
-			m.Title = "Title Teste"
-			m.Vibrate = []int{200, 100, 200}
-			channelMessageNotification <- m
+	channelMessageNotification := make(chan *notification.MessageNotification, 1000)
+	go bot.Run(channelMessageNotification)
+	go notification.Notify(channelMessageNotification)
 
-			log.Println("Enviando notificacao")
-			time.Sleep(30 * time.Second)
-		}
-	}()
-	// ----------------------------------
+	// pontuados
+	go getPontuados(session.Copy())
 
 	router := chi.NewRouter()
 	router.Use(middleware.DefaultCompress)
@@ -71,9 +62,46 @@ func main() {
 
 	kartolafc.BuildRoutes(router)
 	log.Println("Bora Cumpade.")
-	log.Println("listen", cmd.ServerBind)
-	err = http.ListenAndServe(cmd.ServerBind, router)
+	log.Println("listen", cmd.Config.ServerBind)
+	err = http.ListenAndServe(cmd.Config.ServerBind, router)
 	if err != nil {
 		panic(err)
 	}
+}
+
+func ranking(session *mgo.Session) {
+	colllection := session.DB("kartolafc").C("times")
+	go kartolafc.LoadInMemory(colllection)
+}
+
+func getPontuados(session *mgo.Session) {
+	// aguarda alguns segundos para o status estar disponivel
+	time.Sleep(3 * time.Second)
+	// se o mercado estiver fechado nao e preciso
+	if kartolafc.CacheStatus.StatusMercado == 2 {
+		return
+	}
+	// temporario, para criar pontuados mesmo com mercado aberto
+	collection := session.DB("kartolafc").C("pontuados")
+
+	var pontuadosResult  interface{}
+	err := collection.Find(bson.M{"rodada": (kartolafc.CacheStatus.RodadaAtual - 1)}).One(&pontuadosResult)
+	if err != nil {
+		log.Println("erro na consulta dos pontuados", err)
+		return
+	}
+
+	pontuadosByte, err := json.Marshal(pontuadosResult)
+	if err != nil {
+		log.Println("nao foi possivel mapear os pontuados na interface")
+	}
+
+	pontuados := api.Pontuados{}
+	json.Unmarshal(pontuadosByte, &pontuados)
+
+	if pontuados.Rodada == 0 {
+		log.Println("quantidade de pontuados retornado da collection igual a zero")
+		return
+	}
+	kartolafc.CachePontuados = pontuados
 }

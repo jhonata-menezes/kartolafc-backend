@@ -49,7 +49,6 @@ func (p *Partidas) Get(rodada int) {
 		res, err = request.Get(URL_PARTIDAS, 10)
 	}
 	if err != nil || res.StatusCode() != 200 {
-		log.Println("nao foi possivel obter a rodada", rodada, err)
 		return
 	}
 	if err = json.Unmarshal(res.Body(), &p); err != nil {
