@@ -6,6 +6,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"log"
 	"sort"
+	"github.com/jhonata-menezes/kartolafc-backend/api"
 )
 
 type AtletaRanking struct {
@@ -85,15 +86,13 @@ func LoadInMemory(collection *mgo.Collection) {
 		atletasFormatado[k] = timeTemp
 	}
 	log.Println("atualizado array de times com a posicao no indice")
-
-	go UpdatePontuados()
-	// Aguarda o cache dos pontuados serem carregados da api
-	time.Sleep(5 * time.Second)
 	go SortPontuados(atletasFormatado)
 }
 
 func SortPontuados(times TimesRankingFormated) {
 	CacheRankingTimeIdPontuados = make([]TimeIdRanking, 15000000)
+	// cache local para comparar, se houve mudanca na pontuacao entao e efetuado sort, assim economiza processamento
+	CacheLocalPontuados := CachePontuados
 	for {
 		inicio := time.Now()
 		sort.Sort(times)
@@ -111,8 +110,12 @@ func SortPontuados(times TimesRankingFormated) {
 		log.Println("atualizado array de times com time_id no indice")
 
 		melhores()
-		//aguarda 2 minutos para fazer o sort novamente
-		time.Sleep(120 * time.Second)
+		//aguarda 1 minuto para fazer o sort novamente
+		for PontuadosSaoIguais(CacheLocalPontuados, CachePontuados) {
+			time.Sleep(60 * time.Second)
+		}
+		// atualiza o cache local
+		CacheLocalPontuados = CachePontuados
 	}
 }
 
@@ -125,4 +128,14 @@ func melhores() {
 		}
 		CacheRankingPontuadosMelhores = melhores
 	}
+}
+
+func PontuadosSaoIguais(old, new api.Pontuados) bool {
+	for atletaId, desc := range new.Atletas {
+		if (old.Atletas[atletaId].Pontuacao == desc.Pontuacao) {
+			continue
+		}
+		return false
+	}
+	return true
 }

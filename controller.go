@@ -6,6 +6,7 @@ import (
 	"github.com/pressly/chi"
 	"strconv"
 	"github.com/pressly/chi/render"
+	"github.com/jhonata-menezes/kartolafc-backend/notification"
 )
 
 type DefaultMessage struct {
@@ -30,7 +31,7 @@ func GetTimes(response http.ResponseWriter, request *http.Request) {
 	times.Pesquisa = timePesquisado
 	times.GetTimes()
 
-	response.Write(JsonBuild(times))
+	render.JSON(response, request, times)
 }
 
 func GetTime(response http.ResponseWriter, request *http.Request) {
@@ -105,7 +106,33 @@ func GetPartida(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
+func AddNotificacao(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
+	client := notification.Subscription{}
+	render.DecodeJSON(request.Body, &client)
+	notification.ChannelSubscribe <- client
+	render.JSON(response, request,  DefaultMessage{"ok", "Inscrito com sucesso"})
+}
 
+func GetMelhoresRanking(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
+	render.JSON(response, request, CacheRankingPontuadosMelhores)
+}
+
+func GetRankingTimeId(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
+	timeId, err := strconv.Atoi(chi.URLParam(request, "id"))
+
+	if err != nil ||
+		timeId < 1 ||
+		timeId >= 15000000 ||
+		CacheRankingTimeIdPontuados[timeId].TimeId == 0{
+
+		render.JSON(response, request, DefaultMessage{"error", "id informado nao existe"})
+	}else{
+		render.JSON(response, request, CacheRankingTimeIdPontuados[timeId])
+	}
+}
 
 func responseDefault(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")

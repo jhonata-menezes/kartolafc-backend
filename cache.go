@@ -29,7 +29,6 @@ func UpdateDestaques() {
 	destaques := api.Destaques{}
 	destaques.GetDestaques()
 	if len(destaques) > 0 {
-		//log.Printf("%#v", destaques)
 		CacheDestaques = destaques
 	}
 
@@ -49,6 +48,11 @@ func UpdateMercado() {
 }
 
 func UpdatePontuados() {
+	// para nao ficar enviando muitas requisicoes, ira apenas atualizar quando o mercado estiver fechado
+	for (CacheStatus.StatusMercado != 2) {
+		SleepCacheSecond(60)
+	}
+
 	pontuados := api.Pontuados{}
 	pontuados.GetPontuados()
 
@@ -62,6 +66,26 @@ func UpdatePontuados() {
 
 func UpdatePartidas() {
 	CachePartidas = make([]api.Partidas, 21)
+
+	// se pegou todas rodadas anteriores, atualiza apenas a rodada atual
+	if CachePartidas[0].Rodada > 0 {
+		tmp := api.Partidas{}
+		tmp.Get(0)
+
+		// atualiza o cache da rodada 0 e da rodada retornada
+		if tmp.Rodada > 0 {
+			CachePartidas[0] = tmp
+			CachePartidas[tmp.Rodada] = tmp
+		} else {
+			log.Println("rodada atual retornada como 0")
+		}
+		CachePartidas[0] = tmp
+
+		SleepCacheSecond(10)
+		UpdatePartidas()
+	}
+
+
 	for i:=0; i<=20; i++ {
 		tmp := api.Partidas{}
 		if i == 0 {
@@ -71,7 +95,6 @@ func UpdatePartidas() {
 		}
 		tmp.Get(i)
 		CachePartidas[i] = tmp
-		log.Println(i, CachePartidas[i].Rodada)
 	}
 
 	SleepCacheSecond(30)
