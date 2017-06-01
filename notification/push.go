@@ -7,6 +7,7 @@ import (
 	"github.com/jhonata-menezes/kartolafc-backend/cmd"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"io/ioutil"
 )
 
 // Keys are the base64 encoded values from PushSubscription.getKey()
@@ -24,7 +25,7 @@ type Subscription struct {
 
 var vapidPrivateKey = cmd.Config.VapidPrivate
 
-var usersKartolafc map[string]Subscription
+var usersKartolafc = make(map[string]Subscription, 10000)
 
 var ChannelSubscribe = make(chan Subscription, 1000)
 
@@ -50,7 +51,6 @@ func init() {
 // adiciona os inscritos no array [temporario]
 func AddSubscribe(subscription *chan Subscription) {
 	collection := getCollection()
-	usersKartolafc = make(map[string]Subscription, 10000)
 	for s := range *subscription {
 		if _, v := usersKartolafc[s.Endpoint]; v {
 			continue
@@ -87,7 +87,7 @@ func Notify(channelNotifcation chan *MessageNotification) {
 			adapter.Endpoint = s.Endpoint
 			adapter.Keys.Auth = s.Keys.Auth
 			adapter.Keys.P256dh = s.Keys.P256dh
-			_, err := webpush.SendNotification(mByte, &adapter, &webpush.Options{
+			res, err := webpush.SendNotification(mByte, &adapter, &webpush.Options{
 				Subscriber:      "mailto:jhonatamenezes10@gmail.com",
 				TTL:             60,
 				VAPIDPrivateKey: vapidPrivateKey,
@@ -95,6 +95,9 @@ func Notify(channelNotifcation chan *MessageNotification) {
 
 			if err != nil {
 				log.Fatal(err)
+			} else {
+				s, _ := ioutil.ReadAll(res.Body)
+				log.Printf("vapid: %#v", string(s))
 			}
 		}
 	}
