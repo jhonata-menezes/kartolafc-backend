@@ -70,6 +70,9 @@ func SomaPontuacao(atletasTime TimeRankingFormated) float32 {
 }
 
 func LoadInMemory(collection *mgo.Collection) {
+	// se houver request enquanto faz o load do db gerar: index out of range
+	CacheRankingTimeIdPontuados = make([]TimeIdRanking, 15000000)
+
 	inicio := time.Now()
 
 	var atl TimesRanking
@@ -98,7 +101,6 @@ func LoadInMemory(collection *mgo.Collection) {
 }
 
 func SortPontuados(times TimesRankingFormated) {
-	CacheRankingTimeIdPontuados = make([]TimeIdRanking, 15000000)
 	// cache local para comparar, se houve mudanca na pontuacao entao e efetuado sort, assim economiza processamento
 	CacheLocalPontuados := CachePontuados
 	for {
