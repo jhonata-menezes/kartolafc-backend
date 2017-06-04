@@ -18,7 +18,7 @@ type AtletasRanking struct {
 	Atletas []AtletaRanking `bson:"atletas"`
 	TimeCompleto struct{
 		TimeId int
-		Assinante bool `bson:"assinante"`
+		Assinante bool `json:"assinante" bson:"assinante"`
 	} `bson:"timecompleto"`
 	Mensagem string `bson:"mensagem"`
 }
@@ -28,7 +28,7 @@ type TimesRanking []AtletasRanking
 type TimeRankingFormated struct {
 	TimeId int `json:"time_id"`
 	Pontuacao float32 `json:"pontuacao"`
-	Assinante bool `bson:"assinante"`
+	Assinante bool `json:"assinante" bson:"assinante"`
 	Atletas []AtletaRanking `bson:"atletas" json:"atletas,omitempty"`
 }
 
