@@ -19,6 +19,7 @@ type AtletasRanking struct {
 	TimeCompleto struct{
 		TimeId int
 	} `bson:"timecompleto"`
+	Mensagem string `bson:"mensagem"`
 }
 
 type TimesRanking []AtletasRanking
@@ -79,6 +80,10 @@ func LoadInMemory(collection *mgo.Collection) {
 	// formatando os dados e criando array de tamamnho especifico
 	atletasFormatado := make([]TimeRankingFormated, len(atl))
 	for k, a := range atl {
+		// time que nao tem escalacao, não precisa ser ordenado
+		if a.Mensagem == "Este time ainda não foi escalado na temporada." {
+			continue
+		}
 		timeTemp := TimeRankingFormated{}
 		timeTemp.TimeId = a.TimeCompleto.TimeId
 		timeTemp.Pontuacao = a.Pontuacao
