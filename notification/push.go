@@ -94,10 +94,11 @@ func Notify(channelNotifcation chan *MessageNotification) {
 			})
 
 			if err != nil {
-				log.Fatal(err)
+				log.Println(err)
 			} else {
 				s, _ := ioutil.ReadAll(res.Body)
 				log.Printf("vapid: %#v", string(s))
+				res.Body.Close()
 			}
 		}
 	}
