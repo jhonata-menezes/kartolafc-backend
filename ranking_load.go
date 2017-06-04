@@ -18,6 +18,7 @@ type AtletasRanking struct {
 	Atletas []AtletaRanking `bson:"atletas"`
 	TimeCompleto struct{
 		TimeId int
+		Assinante bool `bson:"assinante"`
 	} `bson:"timecompleto"`
 	Mensagem string `bson:"mensagem"`
 }
@@ -27,6 +28,7 @@ type TimesRanking []AtletasRanking
 type TimeRankingFormated struct {
 	TimeId int `json:"time_id"`
 	Pontuacao float32 `json:"pontuacao"`
+	Assinante bool `bson:"assinante"`
 	Atletas []AtletaRanking `bson:"atletas" json:"atletas,omitempty"`
 }
 
@@ -38,6 +40,7 @@ type TimeIdRanking struct {
 	TimeId int `json:"time_id"`
 	Pontuacao float32 `json:"pontuacao"`
 	Posicao int `json:"posicao"`
+	Assinante bool `json:"assinante" bson:"assinante"`
 }
 
 func (a TimesRankingFormated) Len() int {
@@ -87,7 +90,7 @@ func LoadInMemory(collection *mgo.Collection) {
 		timeTemp := TimeRankingFormated{}
 		timeTemp.TimeId = a.TimeCompleto.TimeId
 		timeTemp.Pontuacao = a.Pontuacao
-		timeTemp.Atletas = a.Atletas
+		timeTemp.Assinante = a.TimeCompleto.Assinante
 		atletasFormatado[k] = timeTemp
 	}
 	log.Println("atualizado array de times com a posicao no indice")
@@ -110,6 +113,7 @@ func SortPontuados(times TimesRankingFormated) {
 			timeTemp.Pontuacao = t.Pontuacao
 			timeTemp.Posicao = (k+1)
 			timeTemp.TimeId = t.TimeId
+			timeTemp.Assinante = t.Assinante
 			CacheRankingTimeIdPontuados[t.TimeId] = timeTemp
 		}
 		log.Println("atualizado array de times com time_id no indice")
