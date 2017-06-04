@@ -1,6 +1,8 @@
 package kartolafc
 
-import "github.com/pressly/chi"
+import (
+	"github.com/pressly/chi"
+)
 
 func BuildRoutes(mux *chi.Mux){
 	mux.Get("/", GetHome)

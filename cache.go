@@ -49,7 +49,7 @@ func UpdateMercado() {
 
 func UpdatePontuados() {
 	// para nao ficar enviando muitas requisicoes, ira apenas atualizar quando o mercado estiver fechado
-	for (CacheStatus.StatusMercado != 2) {
+	for (CacheStatus.StatusMercado != 2 && CacheStatus.StatusMercado != 0) {
 		SleepCacheSecond(60)
 	}
 
@@ -60,7 +60,12 @@ func UpdatePontuados() {
 		CachePontuados = pontuados
 	}
 
-	SleepCacheSecond(60)
+	// verificar se tem jogo rolando para diminuir o tempo de requisicao
+	if TemJogoComPartidaRolando() {
+		SleepCacheSecond(10)
+	} else {
+		SleepCacheSecond(60)
+	}
 	UpdatePontuados()
 }
 

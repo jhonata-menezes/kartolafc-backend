@@ -40,6 +40,7 @@ func main() {
 
 	// pontuados
 	go getPontuados(session.Copy())
+	go kartolafc.Run(channelMessageNotification)
 
 	router := chi.NewRouter()
 	router.Use(middleware.DefaultCompress)
