@@ -7,5 +7,6 @@ type MessageNotification struct {
 	Badge string `json:"badge"`
 	Vibrate []int `json:"vibrate"`
 	Link string `json:"link"`
+	Scout string `json:"scout"`
 }
 

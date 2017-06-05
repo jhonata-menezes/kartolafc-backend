@@ -114,7 +114,7 @@ func requestEndpoint(ch chan requestBroadcast) {
 			log.Println(err)
 		} else {
 			s, _ := ioutil.ReadAll(res.Body)
-			log.Printf("vapid: %#v", string(s))
+			log.Printf("status code: %d body response: %#v", res.StatusCode, string(s))
 			res.Body.Close()
 		}
 	}

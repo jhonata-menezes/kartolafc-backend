@@ -70,7 +70,7 @@ func getNotificacao(s string) (notification.MessageNotification, error) {
 	regComando, _ := regexp.Compile("(/[\\w-_]+) ?\n(.*?)\n(.*?)\n(.*?)\n(.*?)$")
 	if regComando.MatchString(s) {
 		match := regComando.FindStringSubmatch(s)
-		return notification.MessageNotification{match[2], match[3], match[4], "", nil, match[5]}, nil
+		return notification.MessageNotification{match[2], match[3], match[4], "", nil, match[5], "notificacao"}, nil
 	}
 	log.Println("errou")
 	return notification.MessageNotification{}, errors.New("nao foi possivel parsear")

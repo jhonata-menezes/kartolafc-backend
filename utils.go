@@ -3,6 +3,8 @@ package kartolafc
 import (
 	"time"
 	"log"
+	"bytes"
+	"encoding/gob"
 )
 
 func TemJogoComPartidaRolando() bool {
@@ -20,4 +22,12 @@ func TemJogoComPartidaRolando() bool {
 
 	}
 	return false
+}
+
+func CopyStructs(from, to interface{}) {
+	buff := new(bytes.Buffer)
+	enc := gob.NewEncoder(buff)
+	dec := gob.NewDecoder(buff)
+	enc.Encode(from)
+	dec.Decode(to)
 }
