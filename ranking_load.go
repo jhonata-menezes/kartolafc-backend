@@ -70,6 +70,7 @@ func SomaPontuacao(atletasTime TimeRankingFormated) float32 {
 }
 
 func LoadInMemory(collection *mgo.Collection) {
+	time.Sleep(5 * time.Second)
 	// se houver request enquanto faz o load do db gerar: index out of range
 	CacheRankingTimeIdPontuados = make([]TimeIdRanking, 15000000)
 
@@ -93,6 +94,7 @@ func LoadInMemory(collection *mgo.Collection) {
 		timeTemp := TimeRankingFormated{}
 		timeTemp.TimeId = a.TimeCompleto.TimeId
 		timeTemp.Pontuacao = a.Pontuacao
+		timeTemp.Atletas = a.Atletas
 		timeTemp.Assinante = a.TimeCompleto.Assinante
 		atletasFormatado[k] = timeTemp
 	}
@@ -138,6 +140,21 @@ func melhores() {
 			melhores[k].Atletas = nil
 		}
 		CacheRankingPontuadosMelhores = melhores
+
+		melhores = make([]TimeRankingFormated, 100)
+		qtd := 0
+		for _, temp := range CacheRankingPontuados {
+			if temp.Assinante == true {
+				melhores[qtd] = temp
+				melhores[qtd].Atletas = nil
+				qtd++
+			}
+
+			if qtd >= 99 {
+				break
+			}
+		}
+		CacheRankingPontuadosMelhoresPro = melhores
 	}
 }
 

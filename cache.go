@@ -12,6 +12,7 @@ var CacheDestaques api.Destaques
 var CachePontuados api.Pontuados
 var CacheRankingPontuados TimesRankingFormated
 var CacheRankingPontuadosMelhores []TimeRankingFormated
+var CacheRankingPontuadosMelhoresPro []TimeRankingFormated
 var CacheRankingTimeIdPontuados []TimeIdRanking
 var CachePartidas []api.Partidas
 

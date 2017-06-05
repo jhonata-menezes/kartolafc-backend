@@ -119,6 +119,11 @@ func GetMelhoresRanking(response http.ResponseWriter, request *http.Request) {
 	render.JSON(response, request, CacheRankingPontuadosMelhores)
 }
 
+func GetMelhoresRankingPro(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
+	render.JSON(response, request, CacheRankingPontuadosMelhoresPro)
+}
+
 func GetRankingTimeId(response http.ResponseWriter, request *http.Request) {
 	responseDefault(response)
 	timeId, err := strconv.Atoi(chi.URLParam(request, "id"))

@@ -12,6 +12,7 @@ type configTemplate struct {
 	VapidPrivate string `json:"vapidPrivate"`
 	BotKey string `json:"botKey"`
 	BotIdClient int `json:"botClientId"`
+	JobsNotification int `json:"jobsNotification"`
 }
 
 var Config configTemplate

@@ -23,6 +23,11 @@ type Subscription struct {
 	TimeId 	 int    `json:"time_id"`
 }
 
+type requestBroadcast struct {
+	M []byte
+	S Subscription
+}
+
 var vapidPrivateKey = cmd.Config.VapidPrivate
 
 var usersKartolafc = make(map[string]Subscription, 10000)
@@ -74,32 +79,43 @@ func AddSubscribe(subscription *chan Subscription) {
 
 
 func Notify(channelNotifcation chan *MessageNotification) {
+	channelRequest := make(chan requestBroadcast, 100000)
+	for i:=0; i<cmd.Config.JobsNotification; i++ {
+		go requestEndpoint(channelRequest)
+	}
 
 	for m := range channelNotifcation {
-		// Send Notification
 		mByte, err := json.Marshal(m)
 		if err != nil {
 			continue
 		}
 
-		for _, s := range usersKartolafc {
-			adapter := webpush.Subscription{}
-			adapter.Endpoint = s.Endpoint
-			adapter.Keys.Auth = s.Keys.Auth
-			adapter.Keys.P256dh = s.Keys.P256dh
-			res, err := webpush.SendNotification(mByte, &adapter, &webpush.Options{
-				Subscriber:      "mailto:jhonatamenezes10@gmail.com",
-				TTL:             60,
-				VAPIDPrivateKey: vapidPrivateKey,
-			})
+		// channel de usuarios, as request sao enviadas paralelamente
+		for _, b := range usersKartolafc {
+			channelRequest <- requestBroadcast{mByte, b}
+		}
+	}
+}
 
-			if err != nil {
-				log.Println(err)
-			} else {
-				s, _ := ioutil.ReadAll(res.Body)
-				log.Printf("vapid: %#v", string(s))
-				res.Body.Close()
-			}
+func requestEndpoint(ch chan requestBroadcast) {
+	// Send Notification
+	for s := range ch {
+		adapter := webpush.Subscription{}
+		adapter.Endpoint = s.S.Endpoint
+		adapter.Keys.Auth = s.S.Keys.Auth
+		adapter.Keys.P256dh = s.S.Keys.P256dh
+		res, err := webpush.SendNotification(s.M, &adapter, &webpush.Options{
+			Subscriber:      "mailto:jhonatamenezes10@gmail.com",
+			TTL:             60,
+			VAPIDPrivateKey: vapidPrivateKey,
+		})
+
+		if err != nil {
+			log.Println(err)
+		} else {
+			s, _ := ioutil.ReadAll(res.Body)
+			log.Printf("vapid: %#v", string(s))
+			res.Body.Close()
 		}
 	}
 }

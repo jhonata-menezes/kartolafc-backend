@@ -3,5 +3,6 @@
   "mongodb": "127.0.0.1:27017",
   "vapidPrivate": "",
   "botKey": "",
-  "botClientId": 0
+  "botClientId": 0,
+  "jobsNotification": 10
 }

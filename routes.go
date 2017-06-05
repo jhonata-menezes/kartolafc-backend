@@ -17,5 +17,6 @@ func BuildRoutes(mux *chi.Mux){
 	mux.Get("/partidas/:partida", GetPartida)
 	mux.Post("/notificacao/adicionar", AddNotificacao)
 	mux.Get("/ranking/melhores", GetMelhoresRanking)
+	mux.Get("/ranking/melhores/pro", GetMelhoresRankingPro)
 	mux.Get("/ranking/time/id/:id", GetRankingTimeId)
 }
