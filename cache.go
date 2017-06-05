@@ -15,6 +15,7 @@ var CacheRankingPontuadosMelhores []TimeRankingFormated
 var CacheRankingPontuadosMelhoresPro []TimeRankingFormated
 var CacheRankingTimeIdPontuados []TimeIdRanking
 var CachePartidas []api.Partidas
+var CacheHistoricoAtleta = make([]api.PontuacaoHistorico, 100000)
 
 func UpdateStatus() {
 	status := api.Status{}
@@ -107,12 +108,24 @@ func UpdatePartidas() {
 	UpdatePartidas()
 }
 
+func UpdateHistoricoPontuacao() {
+	SleepCacheSecond(10)
+	for _, d := range CacheKartolaAtletas.Atleta {
+		historico := api.PontuacaoHistorico{}
+		historico.Get(d.AtletaId)
+		CacheHistoricoAtleta[d.AtletaId] = historico
+	}
+	SleepCacheSecond(7200)
+	UpdateHistoricoPontuacao()
+}
+
 func UpdateCache() {
 	go UpdateStatus()
 	go UpdateDestaques()
 	go UpdateMercado()
 	go UpdatePontuados()
 	go UpdatePartidas()
+	go UpdateHistoricoPontuacao()
 }
 
 func SleepCacheSecond(t int) {

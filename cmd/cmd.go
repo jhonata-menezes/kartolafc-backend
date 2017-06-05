@@ -13,6 +13,7 @@ type configTemplate struct {
 	BotKey string `json:"botKey"`
 	BotIdClient int `json:"botClientId"`
 	JobsNotification int `json:"jobsNotification"`
+	TokenGlb string `json:"tokenGlb"`
 }
 
 var Config configTemplate

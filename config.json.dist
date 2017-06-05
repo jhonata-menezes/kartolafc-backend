@@ -4,5 +4,6 @@
   "vapidPrivate": "",
   "botKey": "",
   "botClientId": 0,
-  "jobsNotification": 10
+  "jobsNotification": 10,
+  "tokenGlb": ""
 }

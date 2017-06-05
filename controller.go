@@ -139,6 +139,17 @@ func GetRankingTimeId(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
+func GetPontuacaHistorico(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
+	atletaId, err := strconv.Atoi(chi.URLParam(request, "id"))
+
+	if err != nil || atletaId <= 0 || atletaId >= 100000 {
+		render.JSON(response, request, DefaultMessage{"error", "id do atleta nao e valido"})
+	} else {
+		render.JSON(response, request, CacheHistoricoAtleta[atletaId])
+	}
+}
+
 func responseDefault(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 }
