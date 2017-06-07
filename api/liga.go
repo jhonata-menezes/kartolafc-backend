@@ -34,7 +34,7 @@ type Liga struct {
 		UrlEscudoSvg string `json:"url_escudo_svg"`
 		FotoPerfil string `json:"foto_perfil"`
 		Assinante bool `json:"assinante"`
-		Patrimonio int `json:"patrimonio"`
+		Patrimonio float32 `json:"patrimonio"`
 		Rankinkg struct{
 			Rodada int `json:"rodada"`
 			Mes int `json:"mes"`
@@ -44,10 +44,10 @@ type Liga struct {
 		} `json:"ranking"`
 
 		Pontos struct{
-			Rodada int `json:"rodada"`
-			Mes int `json:"mes"`
-			Turno int `json:"turno"`
-			Campeonato int `json:"campeonato"`
+			Rodada float32 `json:"rodada"`
+			Mes float32 `json:"mes"`
+			Turno float32 `json:"turno"`
+			Campeonato float32 `json:"campeonato"`
 		} `json:"pontos"`
 
 		Variacao struct{
