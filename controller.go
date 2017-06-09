@@ -116,11 +116,19 @@ func AddNotificacao(response http.ResponseWriter, request *http.Request) {
 
 func GetMelhoresRanking(response http.ResponseWriter, request *http.Request) {
 	responseDefault(response)
+	if len(CacheRankingPontuadosMelhores) == 0 {
+		render.JSON(response, request, DefaultMessage{"error", "melhores da rodada nao esta disponivel no momento"})
+		return
+	}
 	render.JSON(response, request, CacheRankingPontuadosMelhores)
 }
 
 func GetMelhoresRankingPro(response http.ResponseWriter, request *http.Request) {
 	responseDefault(response)
+	if len(CacheRankingPontuadosMelhores) == 0 {
+		render.JSON(response, request, DefaultMessage{"error", "melhores da rodada nao esta disponivel no momento"})
+		return
+	}
 	render.JSON(response, request, CacheRankingPontuadosMelhoresPro)
 }
 

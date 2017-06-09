@@ -23,6 +23,22 @@ type AtletasRanking struct {
 	Mensagem string `bson:"mensagem"`
 }
 
+type SelectAtletasRanking struct {
+	Atletas int `bson:"atletas.atletaid" json:"atletas.atletaid"`
+	TimeId int `json:"timecompleto.timeid" bson:"timecompleto.timeid"`
+	Assinante int `json:"timecompleto.assinante" bson:"timecompleto.assinante"`
+	Mensagem int `bson:"mensagem"`
+}
+
+func getSelect() SelectAtletasRanking {
+	s := SelectAtletasRanking{}
+	s.Atletas = 1
+	s.TimeId = 1
+	s.Assinante = 1
+	s.Mensagem = 1
+	return s
+}
+
 type TimesRanking []AtletasRanking
 
 type TimeRankingFormated struct {
@@ -77,8 +93,8 @@ func LoadInMemory(collection *mgo.Collection) {
 	inicio := time.Now()
 
 	var atl TimesRanking
-	err := collection.Find(bson.M{}).All(&atl)
-
+	// selecionando apenas as fields desejadas
+	err := collection.Find(bson.M{}).Select(getSelect()).All(&atl)
 	if err != nil {
 		panic(err)
 	}
