@@ -4,6 +4,7 @@ import (
 	"github.com/jhonata-menezes/kartolafc-backend/api"
 	"time"
 	"log"
+	"gopkg.in/mgo.v2"
 )
 
 var CacheKartolaAtletas api.Atletas
@@ -16,6 +17,9 @@ var CacheRankingPontuadosMelhoresPro []TimeRankingFormated
 var CacheRankingTimeIdPontuados []TimeIdRanking
 var CachePartidas []api.Partidas
 var CacheHistoricoAtleta = make([]api.PontuacaoHistorico, 100000)
+
+// collection para query de time
+var ChannelCollectionTime = make(chan *mgo.Collection, 2000)
 
 func UpdateStatus() {
 	status := api.Status{}

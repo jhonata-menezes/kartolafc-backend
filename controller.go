@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"github.com/pressly/chi/render"
 	"github.com/jhonata-menezes/kartolafc-backend/notification"
+	"gopkg.in/mgo.v2/bson"
+	"log"
 )
 
 type DefaultMessage struct {
@@ -42,11 +44,31 @@ func GetTime(response http.ResponseWriter, request *http.Request) {
 	id, err := strconv.Atoi(idString)
 
 	if err != nil {
-		render.JSON(response, request, DefaultMessage{"error", "id tem que ser um numero"})
+		render.JSON(response, request, DefaultMessage{"error", "parametor id tem que ser um numerico"})
 	} else {
+		// pega uma conexao com mongodb da fila
+		c := <- ChannelCollectionTime
 		time.TimeCompleto.TimeId = id
-		time.GetTime()
+		rodadaAtual := CacheStatus.RodadaAtual
+		if (CacheStatus.StatusMercado == 1) {
+			rodadaAtual-=1
+		}
+		err := c.Find(bson.M{"timecompleto.timeid": id, "rodadaatual": rodadaAtual}).One(&time)
+
+		// devolve a conexao para a fila
+		ChannelCollectionTime <- c
+
+		// caso nao encontre na collection, requisita a api do cartolafc
+		if err != nil {
+			time.GetTime()
+			render.JSON(response, request, time)
+			log.Println(err)
+			return
+		}
+
+		// caso exista na base, retorna o registro
 		render.JSON(response, request, time)
+
 	}
 }
 
