@@ -104,7 +104,7 @@ func LoadInMemory(collection *mgo.Collection) {
 	atletasFormatado := make([]TimeRankingFormated, len(atl))
 	for k, a := range atl {
 		// time que nao tem escalacao, não precisa ser ordenado
-		if a.Mensagem == "Este time ainda não foi escalado na temporada." {
+		if a.Mensagem == "Este time ainda não foi escalado na temporada." || len(a.Atletas) == 0 {
 			continue
 		}
 		timeTemp := TimeRankingFormated{}

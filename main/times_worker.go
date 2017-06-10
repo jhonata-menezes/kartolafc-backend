@@ -68,7 +68,7 @@ func getTime(timeId int, c *mgo.Collection) {
 		return
 	}
 
-	if timeApi.Mensagem == "Este time ainda não foi escalado na temporada." {
+	if timeApi.Mensagem == "Este time ainda não foi escalado na temporada." || len(timeApi.Atletas) == 0 {
 		return
 	}
 
