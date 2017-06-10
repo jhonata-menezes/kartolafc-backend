@@ -117,9 +117,11 @@ func UpdateHistoricoPontuacao() {
 	for _, d := range CacheKartolaAtletas.Atleta {
 		historico := api.PontuacaoHistorico{}
 		historico.Get(d.AtletaId)
-		CacheHistoricoAtleta[d.AtletaId] = historico
+		if len(historico) != 0 {
+			CacheHistoricoAtleta[d.AtletaId] = historico
+		}
 	}
-	SleepCacheSecond(7200)
+	SleepCacheSecond(600)
 	UpdateHistoricoPontuacao()
 }
 
