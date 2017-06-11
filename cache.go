@@ -15,7 +15,7 @@ var CacheRankingPontuados TimesRankingFormated
 var CacheRankingPontuadosMelhores []TimeRankingFormated
 var CacheRankingPontuadosMelhoresPro []TimeRankingFormated
 var CacheRankingTimeIdPontuados []TimeIdRanking
-var CachePartidas []api.Partidas
+var CachePartidas = make([]api.Partidas, 21)
 var CacheHistoricoAtleta = make([]api.PontuacaoHistorico, 100000)
 
 // collection para query de time
@@ -76,8 +76,6 @@ func UpdatePontuados() {
 }
 
 func UpdatePartidas() {
-	CachePartidas = make([]api.Partidas, 21)
-
 	// se pegou todas rodadas anteriores, atualiza apenas a rodada atual
 	if CachePartidas[0].Rodada > 0 {
 		tmp := api.Partidas{}
@@ -92,7 +90,11 @@ func UpdatePartidas() {
 		}
 		CachePartidas[0] = tmp
 
-		SleepCacheSecond(10)
+		if TemJogoComPartidaRolando() {
+			SleepCacheSecond(10)
+		} else {
+			SleepCacheSecond(1200)
+		}
 		UpdatePartidas()
 	}
 
