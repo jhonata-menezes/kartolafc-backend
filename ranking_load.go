@@ -127,8 +127,8 @@ func SortPontuados(times TimesRankingFormated) {
 	go func(){
 		for t := range ChannelAddTimeRanking {
 			atlRanking := []AtletaRanking{}
-			for id, _ := range t.Atletas {
-				atlRanking = append(atlRanking, AtletaRanking{id})
+			for _, a := range t.Atletas {
+				atlRanking = append(atlRanking, AtletaRanking{a.AtletaId})
 			}
 			newT := TimeRankingFormated{}
 			newT.TimeId = t.TimeCompleto.TimeId
@@ -141,8 +141,7 @@ func SortPontuados(times TimesRankingFormated) {
 		inicio := time.Now()
 		sort.Sort(times)
 		CacheRankingPontuados = times
-		log.Println("sort", time.Since(inicio))
-		log.Println("contando times no ranking", len(times))
+		log.Println("sort", time.Since(inicio), "contando times no ranking", len(times))
 
 		// outro array de times, porem a chave e o time_id
 		for k, t := range times {

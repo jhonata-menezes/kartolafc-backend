@@ -22,7 +22,7 @@ func (p *PontuacaoHistorico) Get(atletaId int) {
 	res, err := request.Get(p.MountUrl(atletaId), 10)
 
 	if err != nil || res.StatusCode() != 200 {
-		log.Println("erro na requisicao de historico", atletaId, err)
+		//log.Println("erro na requisicao de historico", atletaId, err)
 		return
 	}
 
