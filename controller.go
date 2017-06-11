@@ -55,20 +55,21 @@ func GetTime(response http.ResponseWriter, request *http.Request) {
 		}
 		err := c.Find(bson.M{"timecompleto.timeid": id, "rodadaatual": rodadaAtual}).One(&time)
 
-		// devolve a conexao para a fila
-		ChannelCollectionTime <- c
-
 		// caso nao encontre na collection, requisita a api do cartolafc
 		if err != nil {
 			time.GetTime()
 			render.JSON(response, request, time)
 			log.Println(err)
-			return
+			if err = c.Insert(time); time.TimeCompleto.Nome != "" && err == nil {
+				log.Println("time adicionado a collection", time.TimeCompleto.TimeId)
+			}
+
+		} else {
+			// caso exista na base, retorna o registro
+			render.JSON(response, request, time)
 		}
-
-		// caso exista na base, retorna o registro
-		render.JSON(response, request, time)
-
+		// devolve a conexao para a fila
+		ChannelCollectionTime <- c
 	}
 }
 
