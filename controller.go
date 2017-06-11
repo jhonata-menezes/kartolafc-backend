@@ -61,7 +61,8 @@ func GetTime(response http.ResponseWriter, request *http.Request) {
 			render.JSON(response, request, time)
 			log.Println(err)
 			if err = c.Insert(time); time.TimeCompleto.Nome != "" && err == nil {
-				log.Println("time adicionado a collection", time.TimeCompleto.TimeId)
+				ChannelAddTimeRanking <- time
+				log.Println("time adicionado a collection e ao ranking", time.TimeCompleto.TimeId)
 			}
 
 		} else {

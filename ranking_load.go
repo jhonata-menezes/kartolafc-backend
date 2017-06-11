@@ -59,6 +59,8 @@ type TimeIdRanking struct {
 	Assinante bool `json:"assinante" bson:"assinante"`
 }
 
+var ChannelAddTimeRanking = make(chan api.TimeCompleto, 1000)
+
 func (a TimesRankingFormated) Len() int {
 	return len(a)
 }
@@ -121,11 +123,26 @@ func LoadInMemory(collection *mgo.Collection) {
 func SortPontuados(times TimesRankingFormated) {
 	// cache local para comparar, se houve mudanca na pontuacao entao e efetuado sort, assim economiza processamento
 	CacheLocalPontuados := CachePontuados
+	timesPointer := &times
+	go func(){
+		for t := range ChannelAddTimeRanking {
+			atlRanking := []AtletaRanking{}
+			for id, _ := range t.Atletas {
+				atlRanking = append(atlRanking, AtletaRanking{id})
+			}
+			newT := TimeRankingFormated{}
+			newT.TimeId = t.TimeCompleto.TimeId
+			newT.Atletas = atlRanking
+			newT.Assinante = t.TimeCompleto.Assinante
+			*timesPointer = append(times, newT)
+		}
+	}()
 	for {
 		inicio := time.Now()
 		sort.Sort(times)
 		CacheRankingPontuados = times
 		log.Println("sort", time.Since(inicio))
+		log.Println("contando times no ranking", len(times))
 
 		// outro array de times, porem a chave e o time_id
 		for k, t := range times {
