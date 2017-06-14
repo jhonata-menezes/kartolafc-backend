@@ -36,6 +36,45 @@ func GetTimes(response http.ResponseWriter, request *http.Request) {
 	render.JSON(response, request, times)
 }
 
+func GetTimeHistorico(response http.ResponseWriter, request *http.Request) {
+	responseDefault(response)
+	idString := chi.URLParam(request, "id")
+	rodadaString := chi.URLParam(request, "rodada")
+	time := api.TimeHistorico{}
+
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		render.JSON(response, request, DefaultMessage{"error", "parametor id tem que ser numerico"})
+		return
+	}
+
+	rodada, err := strconv.Atoi(rodadaString)
+	if err != nil {
+		render.JSON(response, request, DefaultMessage{"error", "parametor rodada tem que ser numerico"})
+		return
+	}
+
+	if rodada >= CacheStatus.RodadaAtual && CacheStatus.StatusMercado != 1 {
+		render.JSON(response, request, DefaultMessage{"error", "rodada informada invalida"})
+		return
+	}
+	// pega uma conexao com mongodb da fila
+	c := <- ChannelCollectionTime
+
+	// existe na collection?
+	err = c.Database.C("times_historico").Find(bson.M{"timecompleto.timeid": id, "rodadaatual": rodada}).One(&time)
+
+	if err != nil {
+		time.TimeCompleto.TimeId = id
+		time.RodadaAtual = rodada
+		time.GetTime()
+		c.Database.C("times_historico").Insert(time)
+	}
+	ChannelCollectionTime <- c
+
+	render.JSON(response, request, time)
+}
+
 func GetTime(response http.ResponseWriter, request *http.Request) {
 	responseDefault(response)
 	idString := chi.URLParam(request, "id")
