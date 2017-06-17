@@ -65,14 +65,25 @@ func GetTimeHistorico(response http.ResponseWriter, request *http.Request) {
 	err = c.Database.C("times_historico").Find(bson.M{"timecompleto.timeid": id, "rodadaatual": rodada}).One(&time)
 
 	if err != nil {
-		time.TimeCompleto.TimeId = id
-		time.RodadaAtual = rodada
-		time.GetTime()
-		c.Database.C("times_historico").Insert(time)
+		for i:=0; i<3; i++ {
+			time.TimeCompleto.TimeId = id
+			time.RodadaAtual = rodada
+			time.GetTime()
+
+			if time.TimeCompleto.Nome != "" {
+				break
+			}
+		}
+		if time.TimeCompleto.Nome == "" {
+			render.JSON(response, request, DefaultMessage{"error", "problemas ao recuperar historico"})
+		} else {
+			c.Database.C("times_historico").Insert(time)
+			render.JSON(response, request, time)
+		}
+	} else {
+		render.JSON(response, request, time)
 	}
 	ChannelCollectionTime <- c
-
-	render.JSON(response, request, time)
 }
 
 func GetTime(response http.ResponseWriter, request *http.Request) {
