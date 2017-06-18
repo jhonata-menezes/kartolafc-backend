@@ -68,6 +68,7 @@ func dispatchScout(scout string, atleta api.Pontuado, ch chan *notification.Mess
 		m.Icon = atleta.Foto
 		m.Body = fmt.Sprintf("Pontuaçao %.2f", CachePontuados.Atletas[atletaId].Pontuacao)
 		m.Scout = scout
+		m.AtletaId = atletaId
 		atletasNotificados[atletaId] = map[string]int{scout: valorScout}
 		ch <- &m
 	}
