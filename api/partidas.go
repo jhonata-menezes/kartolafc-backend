@@ -2,9 +2,10 @@ package api
 
 import (
 	"strconv"
-	"github.com/valyala/fasthttp"
 	"encoding/json"
 	"log"
+	"github.com/parnurzeal/gorequest"
+	"io/ioutil"
 )
 
 const URL_PARTIDAS = "/partidas"
@@ -40,7 +41,7 @@ type Partidas struct {
 
 func (p *Partidas) Get(rodada int) {
 	request := Request{}
-	var res *fasthttp.Response
+	var res gorequest.Response
 	var err error
 	if rodada >= 1 && rodada <= 20 {
 		rodadaParse := URL_PARTIDAS + "/" + strconv.Itoa(rodada)
@@ -48,10 +49,11 @@ func (p *Partidas) Get(rodada int) {
 	} else {
 		res, err = request.Get(URL_PARTIDAS, 10)
 	}
-	if err != nil || res.StatusCode() != 200 {
+	if err != nil || res.StatusCode != 200 {
 		return
 	}
-	if err = json.Unmarshal(res.Body(), &p); err != nil {
+	by, _:= ioutil.ReadAll(res.Body)
+	if err = json.Unmarshal(by, &p); err != nil {
 		log.Println("nao decodificou o json da partida", rodada)
 	}
 }

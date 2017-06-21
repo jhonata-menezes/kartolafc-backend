@@ -5,6 +5,7 @@ import (
 	"log"
 	"encoding/json"
 	"strings"
+	"io/ioutil"
 )
 
 const URL_TIME_HISTORICO_ID = "/time/id/%d/%d"
@@ -18,10 +19,11 @@ func (t *TimeHistorico) GetTime(){
 	if err != nil {
 		log.Println(err)
 	}
-	if res.StatusCode() != 200 {
-		log.Println("time id diferente de 200", res.StatusCode(), "response: ", string(res.Body()))
+	if res.StatusCode != 200 {
+		log.Println("time id diferente de 200", res.StatusCode)
 	}else{
-		json.Unmarshal(res.Body(), &t)
+		by, _:= ioutil.ReadAll(res.Body)
+		json.Unmarshal(by, &t)
 		t.ChangeFormatDefault()
 	}
 }

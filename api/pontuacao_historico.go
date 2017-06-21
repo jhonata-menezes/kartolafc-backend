@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"encoding/json"
+	"io/ioutil"
 )
 
 const URL_HISTORICO_RODADA = "/auth/mercado/atleta/%d/pontuacao"
@@ -21,12 +22,13 @@ func (p *PontuacaoHistorico) Get(atletaId int) {
 	request := Request{}
 	res, err := request.Get(p.MountUrl(atletaId), 10)
 
-	if err != nil || res.StatusCode() != 200 {
+	if err != nil || res.StatusCode != 200 {
 		//log.Println("erro na requisicao de historico", atletaId, err)
 		return
 	}
 
-	if err = json.Unmarshal(res.Body(), &p); err != nil {
+	by, _:= ioutil.ReadAll(res.Body)
+	if err = json.Unmarshal(by, &p); err != nil {
 		log.Println("nao decodificou o json do historico", atletaId)
 	}
 

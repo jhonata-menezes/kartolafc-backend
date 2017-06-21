@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"strings"
 	"gopkg.in/mgo.v2"
+	"io/ioutil"
 )
 
 type MeuTime api.TimeCompleto
@@ -87,18 +88,21 @@ func (t *MeuTime) GetTime() int {
 
 	for i:=1; i<=8; i++ {
 		res, err := request.Get(t.MountUrl(), 10)
-		status = res.StatusCode()
+		status = res.StatusCode
 		if err != nil {
 			log.Println(err)
+		} else {
+			res.Body.Close()
 		}
-		if res.StatusCode() != 200 {
-			log.Println("tentativa", i,"time id", t.TimeCompleto.TimeId, "diferente de 200", res.StatusCode())
+		if res.StatusCode != 200 {
+			log.Println("tentativa", i,"time id", t.TimeCompleto.TimeId, "diferente de 200", res.StatusCode)
 		}else{
-			json.Unmarshal(res.Body(), &t)
+			by, _ := ioutil.ReadAll(res.Body)
+			json.Unmarshal(by, &t)
 			t.ChangeFormatDefault()
 		}
 
-		if res.StatusCode() == 500 {
+		if res.StatusCode == 500 {
 			continue
 		}else{
 			break

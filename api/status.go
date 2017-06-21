@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"log"
+	"io/ioutil"
 )
 
 const URI_STATUS = "/mercado/status"
@@ -33,10 +34,11 @@ func(c *Status) GetStatus(){
 	if err != nil {
 		log.Println(err)
 	}else{
-		if res.StatusCode() != 200 {
+		if res.StatusCode != 200 {
 			log.Println("endpoint status com code")
 		}else{
-			err = json.Unmarshal(res.Body(), &c)
+			by, _ := ioutil.ReadAll(res.Body)
+			err = json.Unmarshal(by, &c)
 			if err != nil {
 				log.Println(err)
 			}

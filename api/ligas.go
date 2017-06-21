@@ -3,6 +3,7 @@ package api
 import (
 	"log"
 	"encoding/json"
+	"io/ioutil"
 )
 
 const URL_LIGAS = "/ligas?q="
@@ -26,10 +27,11 @@ func (l *PesquisaLigas) GetPesquisaLigas(nome string) {
 	if err != nil {
 		log.Println("ligas", err)
 	}
-	if res.StatusCode() != 200 {
-		log.Println("ligas status ", res.StatusCode())
+	if res.StatusCode != 200 {
+		log.Println("ligas status ", res.StatusCode)
 	}else{
-		json.Unmarshal(res.Body(), &l)
+		by, _:= ioutil.ReadAll(res.Body)
+		json.Unmarshal(by, &l)
 	}
 
 }

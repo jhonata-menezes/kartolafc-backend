@@ -5,6 +5,7 @@ import (
 	"log"
 	"encoding/json"
 	"net/url"
+	"io/ioutil"
 )
 
 type Times struct {
@@ -21,10 +22,11 @@ func (t *Times) GetTimes(){
 	if err != nil {
 		log.Println("pesquisa de times", t.Pesquisa, err)
 	}
-	if res.StatusCode() != 200{
-		log.Println("pesquisa diferente de 200", res.StatusCode(), "response:", string(res.Body()))
+	if res.StatusCode != 200{
+		log.Println("pesquisa diferente de 200", res.StatusCode)
 	}else{
-		json.Unmarshal(res.Body(), &t.Times)
+		by, _:= ioutil.ReadAll(res.Body)
+		json.Unmarshal(by, &t.Times)
 	}
 }
 

@@ -4,6 +4,7 @@ import (
 	"log"
 	"encoding/json"
 	"strings"
+	"io/ioutil"
 )
 
 const URL_DESTAQUES = "/mercado/destaques"
@@ -30,10 +31,11 @@ func (d *Destaques) GetDestaques() {
 	if err != nil {
 		log.Println("destaques", err)
 	}
-	if res.StatusCode() != 200 {
-		log.Println("destaques diferente de 200 status", res.StatusCode())
+	if res.StatusCode != 200 {
+		log.Println("destaques diferente de 200 status", res.StatusCode)
 	}else{
-		if err = json.Unmarshal(res.Body(), &d); err != nil {
+		by, _:= ioutil.ReadAll(res.Body)
+		if err = json.Unmarshal(by, &d); err != nil {
 			log.Println("json destaques", err)
 		}else{
 			d.ChangeFormatDefault()

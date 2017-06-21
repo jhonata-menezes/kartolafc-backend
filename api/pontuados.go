@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 	"log"
+	"io/ioutil"
 )
 
 const URL_PONTUADOS = "/atletas/pontuados"
@@ -45,7 +46,8 @@ func (p *Pontuados) GetPontuados() {
 		log.Println(err)
 	}
 
-	if err = json.Unmarshal(res.Body(),&p); err != nil {
+	by, _:= ioutil.ReadAll(res.Body)
+	if err = json.Unmarshal(by, &p); err != nil {
 		log.Println("json pontuados", err)
 	}else{
 		p.ChangeFormatDefault()

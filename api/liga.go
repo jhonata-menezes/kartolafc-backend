@@ -4,6 +4,7 @@ import (
 	"log"
 	"encoding/json"
 	"strconv"
+	"io/ioutil"
 )
 
 const URL_LIGA = "/auth/liga/"
@@ -63,10 +64,11 @@ type Liga struct {
 func (l *Liga) GetLiga(page int) {
 	request := Request{}
 	if res, err := request.Get(URL_LIGA+l.Liga.Slug + "?page=" + strconv.Itoa(page), 10);
-		err != nil || res.StatusCode() != 200 {
-		log.Println("liga id status", res.StatusCode(), "err", err )
+		err != nil || res.StatusCode != 200 {
+		log.Println("liga id status", res.StatusCode, "err", err )
 	}else{
-		err = json.Unmarshal(res.Body(), &l)
+		by, _:= ioutil.ReadAll(res.Body)
+		err = json.Unmarshal(by, &l)
 		if err != nil {
 			log.Println("liga id parse json")
 		}

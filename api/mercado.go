@@ -4,6 +4,7 @@ import (
 	"log"
 	"encoding/json"
 	"strings"
+	"io/ioutil"
 )
 
 const URL_ATLETAS = "/atletas/mercado"
@@ -39,10 +40,11 @@ func (a *Atletas) GetAtletas(){
 	if err != nil {
 		log.Println("atletas", err)
 	}
-	if res.StatusCode() != 200 {
-		log.Println("atletas status:", res.StatusCode())
+	if res.StatusCode != 200 {
+		log.Println("atletas status:", res.StatusCode)
 	}else{
-		json.Unmarshal(res.Body(), &a)
+		by, _:=ioutil.ReadAll(res.Body)
+		json.Unmarshal(by, &a)
 		a.ChangeFormatDefault()
 	}
 }
