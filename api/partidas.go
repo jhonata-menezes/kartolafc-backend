@@ -5,11 +5,16 @@ import (
 	"github.com/valyala/fasthttp"
 	"encoding/json"
 	"log"
+	"bytes"
+	"fmt"
+	"golang.org/x/net/html"
 )
 
 const URL_PARTIDAS = "/partidas"
+const URL_PARTIDAS_FUTURA = "http://globoesporte.globo.com/servico/esportes_campeonato/responsivo/widget-uuid/1fa965ca-e21b-4bca-ac5c-bbc9741f2c3d/fases/fase-unica-seriea-2017/rodada/%d/jogos.html"
 
 type Partida struct {
+	ConfrontoNome string `json:"confronto_nome"`
 	ClubeCasaId int `json:"clube_casa_id"`
 	ClubeCasaPosicao int `json:"clube_casa_posicao"`
 	ClubeVisitanteId int `json:"clube_visitante_id"`
@@ -54,4 +59,53 @@ func (p *Partidas) Get(rodada int) {
 	if err = json.Unmarshal(res.Body(), &p); err != nil {
 		log.Println("nao decodificou o json da partida", rodada)
 	}
+}
+
+func (p *Partidas)GetFuturas(rodada int) {
+	end := p.mountUrlFuturas(rodada)
+	r := Request{}
+	resp, err := r.GetSimple(end, 10)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	node, err := html.Parse(bytes.NewReader(resp.Body()))
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	partidas := parse(node.FirstChild.LastChild.FirstChild)
+	p.Rodada = rodada
+	p.Partidas = partidas.Partidas
+}
+
+func (p *Partidas)mountUrlFuturas(r int) string {
+	return fmt.Sprintf(URL_PARTIDAS_FUTURA, r)
+}
+
+func parse(n *html.Node) Partidas {
+	f := n
+	partidas := Partidas{}
+	partidas.Partidas = make([]Partida, 0)
+	for {
+		partida := Partida{}
+		n := f.FirstChild.FirstChild
+		partida.ConfrontoNome = n.Attr[1].Val
+		hora := ""
+		if n.NextSibling.NextSibling.FirstChild.NextSibling.NextSibling != nil {
+			hora = "às " + n.NextSibling.NextSibling.FirstChild.NextSibling.NextSibling.Data
+		}
+		partida.PartidaData = n.NextSibling.NextSibling.FirstChild.Data + hora
+		local:=""
+		if (n.NextSibling.NextSibling.FirstChild.NextSibling.FirstChild != nil) {
+			local = n.NextSibling.NextSibling.FirstChild.NextSibling.FirstChild.Data
+		}
+		partida.Local = local
+		partidas.Partidas = append(partidas.Partidas, partida)
+		if f = f.NextSibling; f.NextSibling == nil {
+			break
+		}
+	}
+	return partidas
 }

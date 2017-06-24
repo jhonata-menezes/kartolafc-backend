@@ -5,6 +5,7 @@ import (
 	"time"
 	"log"
 	"gopkg.in/mgo.v2"
+	"regexp"
 )
 
 var CacheKartolaAtletas api.Atletas
@@ -15,7 +16,7 @@ var CacheRankingPontuados TimesRankingFormated
 var CacheRankingPontuadosMelhores []TimeRankingFormated
 var CacheRankingPontuadosMelhoresPro []TimeRankingFormated
 var CacheRankingTimeIdPontuados []TimeIdRanking
-var CachePartidas = make([]api.Partidas, 21)
+var CachePartidas = make([]api.Partidas, 39)
 var CacheHistoricoAtleta = make([]api.PontuacaoHistorico, 100000)
 
 // collection para query de time
@@ -98,18 +99,35 @@ func UpdatePartidas() {
 		UpdatePartidas()
 	}
 
-
-	for i:=0; i<=20; i++ {
+	SleepCacheSecond(8)
+	for i:=0; i<=38; i++ {
 		tmp := api.Partidas{}
-		if i == 0 {
+		if i <= CacheStatus.RodadaAtual {
+			if i == 0 {
+				tmp.Get(i)
+				CachePartidas[i] = tmp
+				continue
+			}
 			tmp.Get(i)
 			CachePartidas[i] = tmp
-			continue
+		} else {
+			if i == 0 {
+				tmp.GetFuturas(i)
+				CachePartidas[i] = tmp
+				continue
+			}
+			tmp.GetFuturas(i)
+			tmp.Clubes = CachePartidas[1].Clubes
+			for i, p := range tmp.Partidas {
+				reg, _ := regexp.Compile("^(.*?) x (.*?)$")
+				times := reg.FindStringSubmatch(p.ConfrontoNome)
+				tmp.Partidas[i].ClubeCasaId = SearchClube(times[1])
+				tmp.Partidas[i].ClubeVisitanteId = SearchClube(times[2])
+			}
+			CachePartidas[i] = tmp
 		}
-		tmp.Get(i)
-		CachePartidas[i] = tmp
-	}
 
+	}
 	SleepCacheSecond(30)
 	UpdatePartidas()
 }
@@ -138,4 +156,13 @@ func UpdateCache() {
 
 func SleepCacheSecond(t int) {
 	time.Sleep(time.Duration(t) * time.Second)
+}
+
+func SearchClube(nomeTime string) int {
+	for id, c := range CachePartidas[1].Clubes {
+		if c.Nome == nomeTime {
+			return id
+		}
+	}
+	return 0
 }

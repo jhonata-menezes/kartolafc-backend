@@ -171,11 +171,11 @@ func GetPartida(response http.ResponseWriter, request *http.Request) {
 	responseDefault(response)
 	partidaString := chi.URLParam(request, "partida")
 	partida, err := strconv.Atoi(partidaString)
-	if err != nil || partida < 0 || partida > 20 || CachePartidas[partida].Rodada == 0 {
+	if err != nil || partida < 0 || partida > 38 {
 		render.JSON(response, request, DefaultMessage{"error", "Rodada invalida."})
 		return
 	}
-	if (partida >= 0 && partida <= 20) {
+	if (partida >= 0 && partida <= 38) {
 		render.JSON(response, request, CachePartidas[partida])
 	}
 }
