@@ -47,7 +47,7 @@ func (p *Partidas) Get(rodada int) {
 	request := Request{}
 	var res *fasthttp.Response
 	var err error
-	if rodada >= 1 && rodada <= 20 {
+	if rodada >= 1 && rodada <= 38 {
 		rodadaParse := URL_PARTIDAS + "/" + strconv.Itoa(rodada)
 		res, err = request.Get(rodadaParse, 10)
 	} else {

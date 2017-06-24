@@ -3,7 +3,6 @@ package kartolafc
 import (
 	"github.com/jhonata-menezes/kartolafc-backend/api"
 	"time"
-	"log"
 	"gopkg.in/mgo.v2"
 	"regexp"
 )
@@ -87,7 +86,8 @@ func UpdatePartidas() {
 			CachePartidas[0] = tmp
 			CachePartidas[tmp.Rodada] = tmp
 		} else {
-			log.Println("rodada atual retornada como 0")
+			SleepCacheSecond(5)
+			UpdatePartidas()
 		}
 		CachePartidas[0] = tmp
 
