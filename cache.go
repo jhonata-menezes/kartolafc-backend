@@ -99,7 +99,7 @@ func UpdatePartidas() {
 		UpdatePartidas()
 	}
 
-	SleepCacheSecond(8)
+	SleepCacheSecond(10)
 	for i:=0; i<=38; i++ {
 		tmp := api.Partidas{}
 		if i <= CacheStatus.RodadaAtual {
