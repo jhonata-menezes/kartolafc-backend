@@ -232,6 +232,14 @@ func GetPontuacaHistorico(response http.ResponseWriter, request *http.Request) {
 	}
 }
 
+func PostLogin(response http.ResponseWriter, request *http.Request) {
+	email := chi.URLParam(request, "email")
+	senha := chi.URLParam(request, "senha")
+	login := api.Login{}
+	login.Login(email, senha)
+	log.Printf("%#v", email)
+}
+
 func responseDefault(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 }
