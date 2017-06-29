@@ -16,6 +16,15 @@ type DefaultMessage struct {
 	Mensagem string `json:"mensagem"`
 }
 
+type LoginSenha struct {
+	Email string `json:"email"`
+	Senha string `json:"senha"`
+}
+
+func (l *LoginSenha) Bind(r *http.Request) error {
+	return nil
+}
+
 func GetHome(response http.ResponseWriter, request *http.Request) {
 	responseDefault(response)
 	render.JSON(response, request, DefaultMessage{"ok", "Birll"})
@@ -233,11 +242,11 @@ func GetPontuacaHistorico(response http.ResponseWriter, request *http.Request) {
 }
 
 func PostLogin(response http.ResponseWriter, request *http.Request) {
-	email := chi.URLParam(request, "email")
-	senha := chi.URLParam(request, "senha")
+	data := &LoginSenha{}
+	render.Bind(request, data)
 	login := api.Login{}
-	login.Login(email, senha)
-	log.Printf("%#v", email)
+	login.Login(data.Email, data.Senha)
+	render.JSON(response, request, login)
 }
 
 func responseDefault(w http.ResponseWriter) {

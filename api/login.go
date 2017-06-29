@@ -19,6 +19,7 @@ type payload struct {
 		Password string `json:"password"`
 		ServiceId int `json:"serviceId"`
 	} `json:"payload"`
+	Captcha string `json:"captcha"`
 }
 
 
@@ -33,7 +34,6 @@ func (l *Login) Login(email, pass string) {
 	if err != nil {
 		log.Println(err)
 	} else {
-		log.Println(string(res.Body()))
 		json.Unmarshal(res.Body(), &l)
 	}
 }
