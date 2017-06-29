@@ -272,6 +272,10 @@ func GetMeuTime(response http.ResponseWriter, request *http.Request) {
 
 func PostSalvarTime(response http.ResponseWriter, request *http.Request) {
 	token := request.Header.Get("token")
+	if token == "" {
+		render.JSON(response, request, DefaultMessage{"error", "token vazio"})
+		return
+	}
 	bodyBytes, _ := ioutil.ReadAll(request.Body)
 	escalacao := api.SalvarTime{}
 	json.Unmarshal(bodyBytes, &escalacao)
