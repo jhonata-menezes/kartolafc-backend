@@ -3,12 +3,13 @@ package api
 import (
 	"log"
 	"encoding/json"
+	"strings"
 )
 
 type MeuTime struct {
 	Atletas []Atleta `json:"atletas"`
 	TimeCompleto Time `json:"time"`
-	Patrimonio int `json:"patrimonio"`
+	Patrimonio float32 `json:"patrimonio"`
 	EsquemaId int `json:"esquema_id"`
 	ValorTime float32 `json:"valor_time"`
 	Mensagem string `json:"mensagem"`
@@ -33,4 +34,11 @@ func (m *MeuTime) Get(token string) {
 		return
 	}
 	json.Unmarshal(resp.Body(), &m)
+	m.ChangeFormatDefault()
+}
+
+func (m *MeuTime) ChangeFormatDefault() {
+	for i, des := range m.Atletas {
+		m.Atletas[i].Foto = strings.Replace(des.Foto, "FORMATO", "140x140", 3)
+	}
 }
