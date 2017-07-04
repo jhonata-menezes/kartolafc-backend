@@ -31,6 +31,8 @@ type Atletas struct{
 		Id int `json:"id"`
 		Nome string `json:"nome"`
 	} `json:"status"`
+	Posicoes map[int]Posicoes `json:"posicoes"`
+	Clubes map[int]Clube `json:"clubes"`
 }
 
 func (a *Atletas) GetAtletas(){
