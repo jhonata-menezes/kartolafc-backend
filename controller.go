@@ -9,11 +9,30 @@ import (
 	"github.com/jhonata-menezes/kartolafc-backend/notification"
 	"gopkg.in/mgo.v2/bson"
 	"log"
+	"io/ioutil"
+	"encoding/json"
 )
 
 type DefaultMessage struct {
 	Status string `json:"status"`
 	Mensagem string `json:"mensagem"`
+}
+
+type LoginSenha struct {
+	Email string `json:"email"`
+	Senha string `json:"senha"`
+}
+
+type TokenGLobo struct {
+	Token string `json:"token"`
+}
+
+func (l *TokenGLobo) Bind(r *http.Request) error {
+	return nil
+}
+
+func (l *LoginSenha) Bind(r *http.Request) error {
+	return nil
 }
 
 func GetHome(response http.ResponseWriter, request *http.Request) {
@@ -231,6 +250,40 @@ func GetPontuacaHistorico(response http.ResponseWriter, request *http.Request) {
 		render.JSON(response, request, CacheHistoricoAtleta[atletaId])
 	}
 }
+
+func PostLogin(response http.ResponseWriter, request *http.Request) {
+	data := &LoginSenha{}
+	render.Bind(request, data)
+	login := api.Login{}
+	login.Login(data.Email, data.Senha)
+	render.JSON(response, request, login)
+}
+
+func GetMeuTime(response http.ResponseWriter, request *http.Request) {
+	token := request.Header.Get("token")
+	if token != "" {
+		meuTime := api.MeuTime{}
+		meuTime.Get(token)
+		render.JSON(response, request, meuTime)
+		return
+	}
+	render.JSON(response, request, DefaultMessage{"error", "token vazio"})
+}
+
+func PostSalvarTime(response http.ResponseWriter, request *http.Request) {
+	token := request.Header.Get("token")
+	if token == "" {
+		render.JSON(response, request, DefaultMessage{"error", "token vazio"})
+		return
+	}
+	bodyBytes, _ := ioutil.ReadAll(request.Body)
+	escalacao := api.SalvarTime{}
+	json.Unmarshal(bodyBytes, &escalacao)
+	escalacao.Post(token)
+	render.JSON(response, request, escalacao)
+}
+
+
 
 func responseDefault(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")

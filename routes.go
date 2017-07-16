@@ -21,4 +21,7 @@ func BuildRoutes(mux *chi.Mux){
 	//mux.Get("/ranking/melhores/pro", GetMelhoresRankingPro)
 	//mux.Get("/ranking/time/id/:id", GetRankingTimeId)
 	mux.Get("/atletas/historico/:id", GetPontuacaHistorico)
+	mux.Post("/login/cartolafc", PostLogin)
+	mux.Get("/time/info", GetMeuTime)
+	mux.Post("/time/salvar", PostSalvarTime)
 }

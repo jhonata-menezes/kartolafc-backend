@@ -5,6 +5,7 @@ import (
 	"time"
 	"net/url"
 	"github.com/jhonata-menezes/kartolafc-backend/cmd"
+	"encoding/json"
 )
 
 const BASE_URL_API = "https://api.cartolafc.globo.com"
@@ -26,6 +27,38 @@ func (r *Request) Get(uri string, timeout int) (*fasthttp.Response, error) {
 	return res, err
 }
 
+func (r *Request) GetToken(uri string, timeout int, token string) (*fasthttp.Response, error) {
+	req := fasthttp.AcquireRequest()
+	req.Header.SetUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Referer", "https://cartolafc.globo.com/")
+	req.Header.Set("Origin", "https://cartolafc.globo.com/")
+	req.Header.Set("Accept-Language", "pt-BR,pt;q=0.8,en-US;q=0.6,en;q=0.4,es;q=0.2")
+	req.Header.Set("X-GLB-Token", token)
+	req.URI().Update(BASE_URL_API + uri)
+	res := fasthttp.AcquireResponse()
+	client := fasthttp.Client{}
+	err := client.DoTimeout(req, res, time.Duration(timeout) * time.Second)
+	return res, err
+}
+
+func (r *Request) PostToken(uri string, timeout int, form []byte, token string) (*fasthttp.Response, error) {
+	req := fasthttp.AcquireRequest()
+	req.Header.SetUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36")
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Referer", "https://cartolafc.globo.com/")
+	req.Header.Set("Origin", "https://cartolafc.globo.com/")
+	req.Header.Set("Accept-Language", "pt-BR,pt;q=0.8,en-US;q=0.6,en;q=0.4,es;q=0.2")
+	req.Header.Set("X-GLB-Token", token)
+	req.Header.SetMethod("POST")
+	req.SetBody(form)
+	req.URI().Update(BASE_URL_API + uri)
+	res := fasthttp.AcquireResponse()
+	client := fasthttp.Client{}
+	err := client.DoTimeout(req, res, time.Duration(timeout) * time.Second)
+	return res, err
+}
+
 func (r *Request) GetSimple(url string, timeout int) (*fasthttp.Response, error) {
 	req := fasthttp.AcquireRequest()
 	req.Header.SetUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36")
@@ -37,7 +70,22 @@ func (r *Request) GetSimple(url string, timeout int) (*fasthttp.Response, error)
 	return res, err
 }
 
+func (r *Request) Post(url string, form interface{}, timeout int) (*fasthttp.Response, error) {
+	req := fasthttp.AcquireRequest()
+	req.Header.SetUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36")
+	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
+	req.Header.SetMethod("POST")
+	formJson, err := json.Marshal(form)
+	req.SetBody(formJson)
+	req.URI().Update(url)
+	res := fasthttp.AcquireResponse()
+	client := fasthttp.Client{}
+	err = client.DoTimeout(req, res, time.Duration(timeout) * time.Second)
+	return res, err
+}
+
 func UrlEncode(path string) string {
 	u := &url.URL{Path: path}
 	return u.String()
 }
+
