@@ -29,7 +29,7 @@ func main() {
 	}
 	session.SetMode(mgo.Monotonic, true)
 	session.SetSocketTimeout(3 * time.Hour)
-	ranking(session.Copy())
+	//ranking(session.Copy())
 
 	for i:=0; i<2000; i++ {
 		kartolafc.ChannelCollectionTime <- session.Copy().DB("kartolafc").C("times")
