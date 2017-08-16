@@ -16,7 +16,7 @@ var CacheRankingPontuadosMelhores []TimeRankingFormated
 var CacheRankingPontuadosMelhoresPro []TimeRankingFormated
 var CacheRankingTimeIdPontuados []TimeIdRanking
 var CachePartidas = make([]api.Partidas, 39)
-var CacheHistoricoAtleta = make([]api.PontuacaoHistorico, 100000)
+var CacheHistoricoAtleta = make([]api.PontuacaoHistorico, 110000)
 
 // collection para query de time
 var ChannelCollectionTime = make(chan *mgo.Collection, 2000)
