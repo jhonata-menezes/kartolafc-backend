@@ -3,9 +3,9 @@ package kartolafc
 import (
 	"github.com/jhonata-menezes/kartolafc-backend/api"
 	"net/http"
-	"github.com/pressly/chi"
+	"github.com/go-chi/chi"
 	"strconv"
-	"github.com/pressly/chi/render"
+	"github.com/go-chi/render"
 	"github.com/jhonata-menezes/kartolafc-backend/notification"
 	"gopkg.in/mgo.v2/bson"
 	"log"

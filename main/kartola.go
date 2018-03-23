@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/pressly/chi"
+	"github.com/go-chi/chi"
 	kartolafc "github.com/jhonata-menezes/kartolafc-backend"
 	"net/http"
 	"github.com/pressly/chi/middleware"
-	"github.com/pressly/chi/render"
+	"github.com/go-chi/render"
 	"github.com/jhonata-menezes/kartolafc-backend/cmd"
 	"log"
 	"github.com/jhonata-menezes/kartolafc-backend/api"
@@ -46,7 +46,7 @@ func main() {
 	go getPontuados(session.Copy())
 	go kartolafc.Run(channelMessageNotification)
 
-	router := chi.NewRouter()
+	router := chi.NewMux()
 	router.Use(middleware.DefaultCompress)
 	router.Use(render.SetContentType(render.ContentTypeJSON))
 

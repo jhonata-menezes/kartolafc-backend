@@ -11,7 +11,7 @@ import (
 )
 
 const URL_PARTIDAS = "/partidas"
-const URL_PARTIDAS_FUTURA = "http://globoesporte.globo.com/servico/esportes_campeonato/responsivo/widget-uuid/1fa965ca-e21b-4bca-ac5c-bbc9741f2c3d/fases/fase-unica-seriea-2017/rodada/%d/jogos.html"
+const URL_PARTIDAS_FUTURA = "https://globoesporte.globo.com/servico/backstage/esportes_campeonato/esporte/futebol/modalidade/futebol_de_campo/categoria/profissional/campeonato/campeonato-brasileiro/edicao/campeonato-brasileiro-2018/fases/fase-unica-seriea-2018/rodada/%d/jogos.html"
 
 type Partida struct {
 	ConfrontoNome string `json:"confronto_nome"`
