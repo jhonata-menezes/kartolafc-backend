@@ -93,7 +93,7 @@ type Liga struct {
 	ChavesMataMata map[string][]LigaMataMata `json:"chaves_mata_mata"`
 }
 
-func (l *Liga) GetLiga(page int) {
+func (l *Liga)  GetLiga(page int) {
 	request := Request{}
 	if res, err := request.Get(URL_LIGA+l.Liga.Slug + "?page=" + strconv.Itoa(page), 10);
 		err != nil || res.StatusCode() != 200 {
