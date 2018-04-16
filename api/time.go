@@ -34,6 +34,7 @@ type TimeCompleto struct {
 	Mensagem string `json:"mensagem"`
 	RodadaAtual int `json:"rodada_atual"`
 	Pontos float32 `json:"pontos"`
+	CapitaoId int `json:"capitao_id"`
 }
 
 func (t *TimeCompleto) GetTime(){
