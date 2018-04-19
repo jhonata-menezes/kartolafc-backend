@@ -9,6 +9,7 @@ import (
 type MeuTime struct {
 	Atletas []Atleta `json:"atletas"`
 	TimeCompleto Time `json:"time"`
+	CapitaoId int `json:"capitao_id"`
 	Patrimonio float32 `json:"patrimonio"`
 	EsquemaId int `json:"esquema_id"`
 	ValorTime float32 `json:"valor_time"`

@@ -1,12 +1,15 @@
 package api
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 const URI_SALVAR_TIME = "/auth/time/salvar"
 
 type SalvarTime struct {
 	Esquema int `json:"esquema,omitempty"`
-	Atleta []int `json:"atleta,omitempty"`
+	Capitao int `json:"capitao,omitempty"`
+	Atletas []int `json:"atletas,omitempty"`
 	Mensagem string `json:"mensagem,omitempty"`
 }
 
