@@ -291,12 +291,19 @@ func Proxy(response http.ResponseWriter, request *http.Request) {
 		response.WriteHeader(http.StatusNoContent)
 		return
 	}
-	responseProxy, by, errs := gorequest.New().Get(url).EndBytes()
+	r := gorequest.New()
+	gorequest.New()
+	for _, h := range []string{"content-type", "cache-control", "expires", "last-modified"} {
+		r.Header.Set(h, request.Header.Get(h))
+	}
+	responseProxy, by, errs := r.Get(url).EndBytes()
 	if len(errs) > 0 {
 		response.WriteHeader(http.StatusNoContent)
 		return
 	}
-	response.Header().Set("content-type", responseProxy.Header.Get("content-type"))
+	for _, h := range []string{"content-type", "cache-control", "expires", "last-modified"} {
+		response.Header().Set(h, responseProxy.Header.Get(h))
+	}
 	response.Write(by)
 	response.WriteHeader(responseProxy.StatusCode)
 }
