@@ -24,4 +24,6 @@ func BuildRoutes(mux *chi.Mux){
 	mux.Post("/login/cartolafc", PostLogin)
 	mux.Get("/time/info", GetMeuTime)
 	mux.Post("/time/salvar", PostSalvarTime)
+
+	mux.Get("/proxy", Proxy)
 }

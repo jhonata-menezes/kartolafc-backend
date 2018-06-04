@@ -11,6 +11,7 @@ import (
 	"log"
 	"io/ioutil"
 	"encoding/json"
+	"github.com/parnurzeal/gorequest"
 )
 
 type DefaultMessage struct {
@@ -283,6 +284,22 @@ func PostSalvarTime(response http.ResponseWriter, request *http.Request) {
 	render.JSON(response, request, escalacao)
 }
 
+
+func Proxy(response http.ResponseWriter, request *http.Request) {
+	url := request.URL.Query().Get("url")
+	if url == "" {
+		response.WriteHeader(http.StatusNoContent)
+		return
+	}
+	responseProxy, by, errs := gorequest.New().Get(url).EndBytes()
+	if len(errs) > 0 {
+		response.WriteHeader(http.StatusNoContent)
+		return
+	}
+	response.Header().Set("content-type", responseProxy.Header.Get("content-type"))
+	response.Write(by)
+	response.WriteHeader(responseProxy.StatusCode)
+}
 
 
 func responseDefault(w http.ResponseWriter) {
