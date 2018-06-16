@@ -37,7 +37,7 @@ Esta é uma breve documentação sobre os endpoints disponiveis
 POST /login/cartolafc
 
 Exemplo de resposta:
-```json
+```javascript
 {
     "id":"Authenticated",
     "userMessage":"Usuário autenticado com sucesso",
