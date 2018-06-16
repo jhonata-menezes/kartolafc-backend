@@ -46,5 +46,5 @@ Exemplo de resposta:
 
 ```
 
-* Informações sobre o time, necessário passar o token de autenticação: GET time/info
+* Informações sobre o time, necessário passar o token de autenticação: GET /time/info
 Header necessário: token: {valor}
